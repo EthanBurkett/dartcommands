@@ -12,6 +12,9 @@
     "mongoose": "^6.2.7",
     "util": "^0.12.4"
   },
+  "repository": {
+    "url": "https://www.github.com/ethanburkett/dartcommands"
+  },
   "devDependencies": {
     "nodemon": "^2.0.15",
     "ts-node": "^10.7.0",
