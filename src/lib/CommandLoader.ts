@@ -47,6 +47,7 @@ export default class CommandLoader {
       } else {
         Command.name = name;
       }
+
       if (!Command.run) {
         console.log(
           chalk.red.bold(`Error: `) +
@@ -81,6 +82,9 @@ export default class CommandLoader {
         } else {
           Command.name = name;
         }
+
+        if (this._options.disabledDefaultCommands?.includes(name)) return;
+
         if (!Command.run) {
           console.log(
             chalk.red.bold(`Error: `) +

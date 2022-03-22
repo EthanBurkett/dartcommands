@@ -22,6 +22,7 @@ class default_1 {
         this._client = client;
         this._options = options;
         this._prefix = "!";
+        this._defaultColor = 0xffffff;
         this._CommandLoader();
         this._EventHandler();
         if (options.mongo)
@@ -77,6 +78,13 @@ class default_1 {
             Object.assign(english_1.Messages, props);
         }
         return this;
+    }
+    defaultColor(color) {
+        this._defaultColor = color;
+        return this;
+    }
+    get getDefaultColor() {
+        return this._defaultColor;
     }
 }
 exports.default = default_1;

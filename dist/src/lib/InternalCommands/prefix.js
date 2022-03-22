@@ -13,7 +13,7 @@ exports.default = {
             const GuildPrefix = (_a = instance === null || instance === void 0 ? void 0 : instance.Cache.GuildPrefixes) === null || _a === void 0 ? void 0 : _a.get(guild.id);
             return new discord_js_1.MessageEmbed({
                 title: `This guild's prefix is: ${GuildPrefix ? GuildPrefix : instance.prefix}`,
-                color: "GREEN",
+                color: instance === null || instance === void 0 ? void 0 : instance.getDefaultColor
             });
         }
         const newPrefix = args[0].toLowerCase();

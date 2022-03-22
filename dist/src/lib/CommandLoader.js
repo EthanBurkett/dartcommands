@@ -49,6 +49,7 @@ class CommandLoader {
     // TODO: Change to JS on production build
     async loadInternal() {
         (await PG(`${path_1.default.join(__dirname, "InternalCommands")}/**/*.js`)).map((file) => {
+            var _a;
             const L = file.split("/");
             let name = L[L.length - 1].substring(0, L[L.length - 1].length - 3);
             let Command = require(file).default;
@@ -64,6 +65,8 @@ class CommandLoader {
             else {
                 Command.name = name;
             }
+            if ((_a = this._options.disabledDefaultCommands) === null || _a === void 0 ? void 0 : _a.includes(name))
+                return;
             if (!Command.run) {
                 console.log(chalk_1.default.red.bold(`Error: `) +
                     "No property named 'run' in command: " +
