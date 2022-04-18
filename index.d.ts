@@ -9,6 +9,8 @@ import {
   MessageEmbed,
   DMChannel,
   PermissionString,
+  HexColorString,
+  ColorResolvable,
 } from "discord.js";
 
 export interface IOptions {
@@ -86,15 +88,15 @@ export default class DartCommands {
   private _options: IOptions;
   private _prefix: string;
   constructor(client: Client, options: IOptions);
-  public defaultPrefix(p: string): any;
+  public defaultPrefix(p: string): this;
   public get prefix(): string;
   public get commands(): Collection<string, ICommand>;
   public get options(): IOptions;
   public get Cache(): Cache;
   public UpdatePrefix(guildId: string, newPrefix: string);
-  public setLanguageSettings(props: LANG_ENGLISH): any;
-  public defaultColor(color: string);
-  public get getDefaultColor(): number;
+  public setLanguageSettings(props: LANG_ENGLISH): this;
+  public defaultColor(color: ColorResolvable): this;
+  public get getDefaultColor(): ColorResolvable;
   public get self(): this;
 }
 
