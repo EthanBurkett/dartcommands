@@ -31,14 +31,22 @@ export default class EventLoader {
         let Event: IEvent = this._options.typescript
           ? require(file).default
           : require(file);
+        const L = file.split("/");
+        let name = L[L.length - 1].substring(0, L[L.length - 1].length - 3);
 
         if (!Event) throw new Error(`Error loading events`);
-        if (!Event.name)
-          throw new Error(`One of your events is missing a "name" property.`);
-        if (!Event.run)
-          throw new Error(`${Event.name} is missing the "run" property`);
+        if (!Event.name) {
+          Event.name = name;
+        }
+        if (!Event.run) {
+          Utils.CLIError(
+            chalk.bold(`${name}`),
+            'is missing the required "run" property.'
+          );
+          process.exit(0);
+        }
 
-        this._events.set(Event.name, Event);
+        this._events.set(Event.name!, Event);
       });
       Utils.CLILog(`Loaded ${chalk.blueBright(this._events.size)} event(s)`);
       new EventHandler(this._client, this._options, this._events);

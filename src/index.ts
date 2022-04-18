@@ -9,14 +9,22 @@ import { Connect, Cache as cache } from "./lib/Mongo";
 import chalk from "chalk";
 
 export const Utils: {
-  CLILog: (message: string) => any;
+  CLILog: (...messages: string[]) => any;
+  CLIError: (...messages: string[]) => any;
 } = {
-  CLILog: (message: string) =>
+  CLILog: (...messages) =>
     console.log(
       chalk.blueBright.bold("DartCommands"),
       chalk.white.bold(">"),
-      message
+      ...messages
     ),
+  CLIError: (...messages) => {
+    console.log(
+      chalk.redBright.bold("DartCommands Error"),
+      chalk.white.bold(">"),
+      ...messages
+    );
+  },
 };
 
 export default class {

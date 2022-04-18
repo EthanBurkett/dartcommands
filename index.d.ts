@@ -34,7 +34,7 @@ export interface IEventObject {
 }
 
 export interface IEvent {
-  name: string;
+  name?: string;
   once?: boolean;
   run(obj: IEventObject): any;
 }
