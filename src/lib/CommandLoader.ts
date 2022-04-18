@@ -1,4 +1,9 @@
-import { Client, Collection } from "discord.js";
+import {
+  Collection,
+  Client,
+  ApplicationCommand,
+  ApplicationCommandOptionData,
+} from "discord.js";
 import { IOptions, ICommand } from "../../index.d";
 import { glob } from "glob";
 import { promisify } from "util";
@@ -57,6 +62,21 @@ export default class CommandLoader {
         process.exit(0);
       }
 
+      if (Command.slash) {
+        if (this._options.testServers && Command.testOnly) {
+          this._options.testServers.map((server: string) => {
+            this.create(
+              Command.name!,
+              Command.description,
+              Command.options!,
+              server
+            );
+          });
+        } else {
+          this.create(Command.name!, Command.description, Command.options!);
+        }
+      }
+
       this._commands.set(name, Command);
     });
   }
@@ -102,5 +122,114 @@ export default class CommandLoader {
 
   public get commands() {
     return this._commands;
+  }
+
+  private didOptionsChange(
+    command: ApplicationCommand,
+    options: ApplicationCommandOptionData[] | any
+  ): boolean {
+    return (
+      command.options?.filter((opt: any, index: any) => {
+        return (
+          opt?.required !== options[index]?.required &&
+          opt?.name !== options[index]?.name &&
+          opt?.options?.length !== options.length
+        );
+      }).length !== 0
+    );
+  }
+
+  public getCommands(guildId?: string) {
+    if (guildId) {
+      return this._client.guilds.cache.get(guildId)?.commands;
+    }
+
+    return this._client.application?.commands;
+  }
+
+  public async create(
+    name: string,
+    description: string,
+    options: ApplicationCommandOptionData[],
+    guildId?: string
+  ): Promise<ApplicationCommand<{}> | undefined> {
+    let commands;
+
+    if (guildId) {
+      commands = this._client.guilds.cache.get(guildId)?.commands;
+    } else {
+      commands = this._client.application?.commands;
+    }
+
+    if (!commands) {
+      return;
+    }
+
+    // @ts-ignore
+    await commands.fetch();
+
+    const cmd = commands.cache.find(
+      (cmd) => cmd.name === name
+    ) as ApplicationCommand;
+
+    if (cmd) {
+      const optionsChanged = this.didOptionsChange(cmd, options);
+
+      if (
+        (cmd.options &&
+          cmd.description &&
+          options &&
+          cmd.options.length != options.length!) ||
+        cmd.description !== description ||
+        optionsChanged
+      ) {
+        Utils.CLILog(
+          `Updating${guildId ? " guild" : ""} slash command "${name}"`
+        );
+
+        return commands?.edit(cmd.id, {
+          name,
+          description,
+          options,
+        });
+      }
+
+      return Promise.resolve(cmd);
+    }
+
+    if (commands) {
+      Utils.CLILog(
+        `Creating${guildId ? " guild" : ""} slash command "${name}"`
+      );
+
+      const newCommand = await commands.create({
+        name,
+        description,
+        options,
+      });
+
+      return newCommand;
+    }
+
+    return Promise.resolve(undefined);
+  }
+
+  public async delete(
+    commandId: string,
+    guildId?: string
+  ): Promise<ApplicationCommand<{}> | undefined> {
+    const commands = this.getCommands(guildId);
+    if (commands) {
+      const cmd = commands.cache.get(commandId);
+      if (cmd) {
+        Utils.CLILog(
+          `Deleting${guildId ? " guild" : ""} slash command "${cmd.name}"`
+        );
+
+        cmd.delete();
+      }
+    }
+
+    return Promise.resolve(undefined);
   }
 }

@@ -38,15 +38,22 @@ export interface IEvent {
 }
 
 export interface ExecuteOptions {
-  message?: Message<boolean>;
-  guild?: Guild;
-  channel?: GuildChannel | TextChannel;
-  member?: GuildMember;
   user?: User;
-  text?: string;
-  instance?: DartCommands;
+  options?: CommandInteractionOption[];
+  message?: Message<boolean>;
+  interaction?: CommandInteraction<CacheType>;
+  guild?: Guild;
   args?: string[];
+  text?: string;
   client?: Client;
+  channel?:
+    | DMChannel
+    | PartialDMChannel
+    | NewsChannel
+    | TextChannel
+    | ThreadChannel;
+  instance?: any;
+  member?: GuildMember;
 }
 
 export interface ICommand {
@@ -59,7 +66,19 @@ export interface ICommand {
   expectedArgs?: string;
   aliases?: string[];
   permission?: PermissionString;
-  run(obj: ExecuteOptions): any;
+  slash?: true | "both";
+  options?: ApplicationCommandOptionData[];
+  run(obj: ExecuteOptions):
+    | {
+        custom?: boolean;
+        content?: string;
+        components?: any[];
+        embeds?: MessageEmbed[];
+        files?: any[];
+        attachments?: any[];
+      }
+    | string
+    | MessageEmbed;
 }
 
 export default class DartCommands {
@@ -76,6 +95,7 @@ export default class DartCommands {
   public setLanguageSettings(props: LANG_ENGLISH): any;
   public defaultColor(color: string);
   public get getDefaultColor(): number;
+  public get self(): this;
 }
 
 export interface LANG_ENGLISH {

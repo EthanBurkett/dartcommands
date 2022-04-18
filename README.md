@@ -96,6 +96,8 @@ new DartCommands(client, {
 
 We're going to create a command that sends "Pong!" as a message
 
+### With the recent update, slash commands are now supported!
+
 `Commands/ping.js`
 
 ```js
@@ -106,6 +108,20 @@ module.exports = {
   testOnly?: true | false,
   minArgs?: 1,
   maxArgs?: 2,
+  slash?: "both", // Can also be set to true to only be a slash command.
+  options: [
+    {
+      name: "arg1",
+      description: "1st argument of slash command",
+      required: true,
+      type: "STRING"
+    },
+    {
+      name: "arg2",
+      description: "2nd argument of slash command",
+      type: "STRING"
+    }
+  ],
   expectedArgs?: '<arg1> [arg2]',
   aliases?: ['p'],
   permission?: 'ADMINISTRATOR',
@@ -119,6 +135,7 @@ module.exports = {
     text,
     user,
     client,
+    interaction
   }) {
     return "Pong!"
     or

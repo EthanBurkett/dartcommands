@@ -7,6 +7,8 @@ import {
   Collection,
   MessageEmbed,
   Permissions,
+  CacheType,
+  Interaction,
 } from "discord.js";
 import { IOptions, ICommand, ExecuteOptions } from "../../index.d";
 import DartCommands from "../index";
@@ -24,13 +26,18 @@ function CheckLang(input: string | object | undefined) {
 export default class CommandHandler {
   private _client: Client;
   private _options: IOptions;
+  private _instance: DartCommands;
 
   constructor(client: Client, options: IOptions, instance: DartCommands) {
     this._client = client;
     this._options = options;
+    this._instance = instance;
     client.on("messageCreate", (message: Message<boolean>): any =>
       this.handleMessage(message, instance)
     );
+    client.on("interactionCreate", (interaction: Interaction<CacheType>) => {
+      this.InteractionEvent(interaction, instance, client);
+    });
   }
 
   private async handleMessage(
@@ -62,6 +69,8 @@ export default class CommandHandler {
           cmd.aliases.includes(args[0].substring(Prefix.length, args[0].length))
       );
     if (!Command) return;
+    if (Command.slash === true) return;
+
     if (!Command.description)
       throw new Error(`${Command.name} does not have a "description" property`);
 
@@ -219,22 +228,125 @@ export default class CommandHandler {
 
     if (result instanceof Promise) result = await result;
 
-    if (typeof result == "object") {
-      if (result.custom) {
-        return message.reply(result);
-      }
-      if (result.type == "rich") {
-        if (!Array.isArray(result)) {
-          result = [result];
+    this.replyFromCallback(message, result);
+  }
+
+  private async InteractionEvent(
+    interaction: any,
+    instance: DartCommands,
+    client: Client
+  ) {
+    if (!interaction.isCommand) return;
+    const { user, commandName, options, guild, channelId } = interaction;
+    const member = interaction.member as GuildMember;
+    const channel = guild?.channels.cache.get(channelId) || null;
+    let Command: ICommand | undefined =
+      this._instance.commands.get(commandName);
+    if (!Command) return;
+
+    if (!Command.slash)
+      return interaction.reply({
+        embeds: [
+          new MessageEmbed()
+            .setDescription("That command is slash disabled.")
+            .setColor("RED"),
+        ],
+      });
+
+    if (Command.permission) {
+      if (!permissionList.includes(Command.permission))
+        throw new Error(
+          `Dart | "${Command.permission}" is an invalid permission node.`
+        );
+      if (!interaction.member?.permissions.has(Command.permission)) {
+        let msg = Messages.noPermission;
+        if (typeof msg == "object") {
+          msg.description = msg.description?.replace(
+            /{PERMISSION}/g,
+            `${Command.permission}`
+          )!;
+          return interaction.reply({
+            embeds: [msg],
+          });
+        } else if (typeof msg == "string") {
+          msg = msg.replace(/{PERMISSION}/g, `${Command.permission}`);
+          return interaction.reply({
+            content: `${msg}`,
+          });
         }
-        return message.reply({
-          embeds: result,
+      }
+    }
+
+    if (Command.ownerOnly && !instance.settings.botOwners)
+      throw new Error(
+        `${Command.name} has property "ownerOnly" but "botOwners" is not defined in the setup method.`
+      );
+
+    if (
+      Command.ownerOnly &&
+      instance.settings.botOwners &&
+      !instance.settings.botOwners?.includes(interaction.author.id)
+    ) {
+      if (!Messages?.ownerOnly) return;
+      if (typeof Messages?.ownerOnly == "object") {
+        return interaction.reply({
+          embeds: [Messages.ownerOnly],
         });
       }
-      return result;
-    } else if (typeof result == "string") {
-      return message.reply({
-        content: result,
+
+      return interaction.reply({
+        content: Messages?.ownerOnly,
+      });
+    }
+
+    if (Command.testOnly && !instance.settings.testServers)
+      throw new Error(
+        `${Command.name} has property "testOnly" but "testServers" is not defined in the setup method.`
+      );
+
+    if (
+      Command.testOnly &&
+      instance.settings.testServers &&
+      !instance.settings.testServers?.includes(interaction.guild?.id!)
+    ) {
+      if (!Messages?.testOnly) return;
+      if (typeof Messages?.testOnly == "object") {
+        return interaction.reply({
+          embeds: [Messages.testOnly],
+        });
+      }
+
+      return interaction.reply({
+        content: Messages?.testOnly,
+      });
+    }
+
+    let reply: { [key: string]: any } | string = Command.run({
+      user,
+      guild,
+      channel,
+      member,
+      interaction,
+      instance: this._instance,
+    });
+
+    if (reply instanceof Promise) reply = await reply;
+
+    this.replyFromCallback(interaction, reply);
+  }
+
+  private replyFromCallback(msgOrInter: any, reply: any) {
+    if (!reply) {
+      return;
+    } else if (reply.type == "rich" && typeof reply == "object") {
+      msgOrInter.reply({
+        embeds: [reply],
+      });
+    } else if (typeof reply == "object" && reply.custom) {
+      msgOrInter.reply(reply);
+    } else if (typeof reply == "string") {
+      msgOrInter.reply({
+        content: reply,
       });
     } else {
       return;

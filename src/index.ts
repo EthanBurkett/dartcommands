@@ -92,4 +92,7 @@ export default class {
   public get getDefaultColor() {
     return this._defaultColor;
   }
+  public get self() {
+    return this;
+  }
 }
