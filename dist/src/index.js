@@ -12,7 +12,10 @@ const EventLoader_1 = __importDefault(require("./lib/EventLoader"));
 const Mongo_1 = require("./lib/Mongo");
 const chalk_1 = __importDefault(require("chalk"));
 exports.Utils = {
-    CLILog: (message) => console.log(chalk_1.default.blueBright.bold("DartCommands"), chalk_1.default.white.bold(">"), message),
+    CLILog: (...messages) => console.log(chalk_1.default.blueBright.bold("DartCommands"), chalk_1.default.white.bold(">"), ...messages),
+    CLIError: (...messages) => {
+        console.log(chalk_1.default.redBright.bold("DartCommands Error"), chalk_1.default.white.bold(">"), ...messages);
+    },
 };
 class default_1 {
     constructor(client, options) {
@@ -85,6 +88,9 @@ class default_1 {
     }
     get getDefaultColor() {
         return this._defaultColor;
+    }
+    get self() {
+        return this;
     }
 }
 exports.default = default_1;

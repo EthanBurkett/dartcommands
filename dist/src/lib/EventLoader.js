@@ -26,12 +26,17 @@ class EventLoader {
                 let Event = this._options.typescript
                     ? require(file).default
                     : require(file);
+                const L = file.split("/");
+                let name = L[L.length - 1].substring(0, L[L.length - 1].length - 3);
                 if (!Event)
                     throw new Error(`Error loading events`);
-                if (!Event.name)
-                    throw new Error(`One of your events is missing a "name" property.`);
-                if (!Event.run)
-                    throw new Error(`${Event.name} is missing the "run" property`);
+                if (!Event.name) {
+                    Event.name = name;
+                }
+                if (!Event.run) {
+                    index_1.Utils.CLIError(chalk_1.default.bold(`${name}`), 'is missing the required "run" property.');
+                    process.exit(0);
+                }
                 this._events.set(Event.name, Event);
             });
             index_1.Utils.CLILog(`Loaded ${chalk_1.default.blueBright(this._events.size)} event(s)`);

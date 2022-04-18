@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const discord_js_1 = require("discord.js");
 const english_1 = require("../lang/english");
 const permissions_1 = require("../Validation/permissions");
 function CheckLang(input) {
@@ -12,7 +13,11 @@ class CommandHandler {
     constructor(client, options, instance) {
         this._client = client;
         this._options = options;
+        this._instance = instance;
         client.on("messageCreate", (message) => this.handleMessage(message, instance));
+        client.on("interactionCreate", (interaction) => {
+            this.InteractionEvent(interaction, instance, client);
+        });
     }
     async handleMessage(message, instance) {
         var _a, _b, _c, _d, _e, _f, _g, _h;
@@ -31,6 +36,8 @@ class CommandHandler {
             Command = Commands.find((cmd) => cmd.aliases &&
                 cmd.aliases.includes(args[0].substring(Prefix.length, args[0].length)));
         if (!Command)
+            return;
+        if (Command.slash === true)
             return;
         if (!Command.description)
             throw new Error(`${Command.name} does not have a "description" property`);
@@ -143,23 +150,105 @@ class CommandHandler {
         });
         if (result instanceof Promise)
             result = await result;
-        if (typeof result == "object") {
-            if (result.custom) {
-                return message.reply(result);
-            }
-            if (result.type == "rich") {
-                if (!Array.isArray(result)) {
-                    result = [result];
+        this.replyFromCallback(message, result);
+    }
+    async InteractionEvent(interaction, instance, client) {
+        var _a, _b, _c, _d, _e;
+        console.log(interaction);
+        if (!interaction.isCommand)
+            return;
+        const { user, commandName, options, guild, channelId } = interaction;
+        const member = interaction.member;
+        const channel = (guild === null || guild === void 0 ? void 0 : guild.channels.cache.get(channelId)) || null;
+        let Command = this._instance.commands.get(commandName);
+        if (!Command)
+            return;
+        if (!Command.slash)
+            return interaction.reply({
+                embeds: [
+                    new discord_js_1.MessageEmbed()
+                        .setDescription("That command is slash disabled.")
+                        .setColor("RED"),
+                ],
+            });
+        if (Command.permission) {
+            if (!permissions_1.permissionList.includes(Command.permission))
+                throw new Error(`Dart | "${Command.permission}" is an invalid permission node.`);
+            if (!((_a = interaction.member) === null || _a === void 0 ? void 0 : _a.permissions.has(Command.permission))) {
+                let msg = english_1.Messages.noPermission;
+                if (typeof msg == "object") {
+                    msg.description = (_b = msg.description) === null || _b === void 0 ? void 0 : _b.replace(/{PERMISSION}/g, `${Command.permission}`);
+                    return interaction.reply({
+                        embeds: [msg],
+                    });
                 }
-                return message.reply({
-                    embeds: result,
+                else if (typeof msg == "string") {
+                    msg = msg.replace(/{PERMISSION}/g, `${Command.permission}`);
+                    return interaction.reply({
+                        content: `${msg}`,
+                    });
+                }
+            }
+        }
+        if (Command.ownerOnly && !instance.settings.botOwners)
+            throw new Error(`${Command.name} has property "ownerOnly" but "botOwners" is not defined in the setup method.`);
+        if (Command.ownerOnly &&
+            instance.settings.botOwners &&
+            !((_c = instance.settings.botOwners) === null || _c === void 0 ? void 0 : _c.includes(interaction.author.id))) {
+            if (!(english_1.Messages === null || english_1.Messages === void 0 ? void 0 : english_1.Messages.ownerOnly))
+                return;
+            if (typeof (english_1.Messages === null || english_1.Messages === void 0 ? void 0 : english_1.Messages.ownerOnly) == "object") {
+                return interaction.reply({
+                    embeds: [english_1.Messages.ownerOnly],
                 });
             }
-            return result;
+            return interaction.reply({
+                content: english_1.Messages === null || english_1.Messages === void 0 ? void 0 : english_1.Messages.ownerOnly,
+            });
         }
-        else if (typeof result == "string") {
-            return message.reply({
-                content: result,
+        if (Command.testOnly && !instance.settings.testServers)
+            throw new Error(`${Command.name} has property "testOnly" but "testServers" is not defined in the setup method.`);
+        if (Command.testOnly &&
+            instance.settings.testServers &&
+            !((_d = instance.settings.testServers) === null || _d === void 0 ? void 0 : _d.includes((_e = interaction.guild) === null || _e === void 0 ? void 0 : _e.id))) {
+            if (!(english_1.Messages === null || english_1.Messages === void 0 ? void 0 : english_1.Messages.testOnly))
+                return;
+            if (typeof (english_1.Messages === null || english_1.Messages === void 0 ? void 0 : english_1.Messages.testOnly) == "object") {
+                return interaction.reply({
+                    embeds: [english_1.Messages.testOnly],
+                });
+            }
+            return interaction.reply({
+                content: english_1.Messages === null || english_1.Messages === void 0 ? void 0 : english_1.Messages.testOnly,
+            });
+        }
+        let reply = Command.run({
+            user,
+            guild,
+            channel,
+            member,
+            interaction,
+            instance: this._instance,
+        });
+        if (reply instanceof Promise)
+            reply = await reply;
+        this.replyFromCallback(interaction, reply);
+    }
+    replyFromCallback(msgOrInter, reply) {
+        if (!reply) {
+            return;
+        }
+        else if (reply.type == "rich" && typeof reply == "object") {
+            msgOrInter.reply({
+                embeds: [reply],
+            });
+        }
+        else if (typeof reply == "object" && reply.custom) {
+            msgOrInter.reply(reply);
+        }
+        else if (typeof reply == "string") {
+            msgOrInter.reply({
+                content: reply,
             });
         }
         else {

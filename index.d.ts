@@ -11,6 +11,7 @@ import {
   PermissionString,
   HexColorString,
   ColorResolvable,
+  Interaction,
 } from "discord.js";
 
 export interface IOptions {

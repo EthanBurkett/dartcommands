@@ -43,6 +43,16 @@ class CommandLoader {
                     chalk_1.default.white.bold(name));
                 process.exit(0);
             }
+            if (Command.slash) {
+                if (this._options.testServers && Command.testOnly) {
+                    this._options.testServers.map((server) => {
+                        this.create(Command.name, Command.description, Command.options, server);
+                    });
+                }
+                else {
+                    this.create(Command.name, Command.description, Command.options);
+                }
+            }
             this._commands.set(name, Command);
         });
     }
@@ -79,6 +89,76 @@ class CommandLoader {
     }
     get commands() {
         return this._commands;
+    }
+    didOptionsChange(command, options) {
+        var _a;
+        return (((_a = command.options) === null || _a === void 0 ? void 0 : _a.filter((opt, index) => {
+            var _a, _b, _c;
+            return ((opt === null || opt === void 0 ? void 0 : opt.required) !== ((_a = options[index]) === null || _a === void 0 ? void 0 : _a.required) &&
+                (opt === null || opt === void 0 ? void 0 : opt.name) !== ((_b = options[index]) === null || _b === void 0 ? void 0 : _b.name) &&
+                ((_c = opt === null || opt === void 0 ? void 0 : opt.options) === null || _c === void 0 ? void 0 : _c.length) !== options.length);
+        }).length) !== 0);
+    }
+    getCommands(guildId) {
+        var _a, _b;
+        if (guildId) {
+            return (_a = this._client.guilds.cache.get(guildId)) === null || _a === void 0 ? void 0 : _a.commands;
+        }
+        return (_b = this._client.application) === null || _b === void 0 ? void 0 : _b.commands;
+    }
+    async create(name, description, options, guildId) {
+        var _a, _b;
+        let commands;
+        if (guildId) {
+            commands = (_a = this._client.guilds.cache.get(guildId)) === null || _a === void 0 ? void 0 : _a.commands;
+        }
+        else {
+            commands = (_b = this._client.application) === null || _b === void 0 ? void 0 : _b.commands;
+        }
+        if (!commands) {
+            return;
+        }
+        // @ts-ignore
+        await commands.fetch();
+        const cmd = commands.cache.find((cmd) => cmd.name === name);
+        if (cmd) {
+            const optionsChanged = this.didOptionsChange(cmd, options);
+            if ((cmd.options &&
+                cmd.description &&
+                options &&
+                cmd.options.length != options.length) ||
+                cmd.description !== description ||
+                optionsChanged) {
+                index_1.Utils.CLILog(`Updating${guildId ? " guild" : ""} slash command "${name}"`);
+                return commands === null || commands === void 0 ? void 0 : commands.edit(cmd.id, {
+                    name,
+                    description,
+                    options,
+                });
+            }
+            return Promise.resolve(cmd);
+        }
+        if (commands) {
+            index_1.Utils.CLILog(`Creating${guildId ? " guild" : ""} slash command "${name}"`);
+            const newCommand = await commands.create({
+                name,
+                description,
+                options,
+            });
+            return newCommand;
+        }
+        return Promise.resolve(undefined);
+    }
+    async delete(commandId, guildId) {
+        const commands = this.getCommands(guildId);
+        if (commands) {
+            const cmd = commands.cache.get(commandId);
+            if (cmd) {
+                index_1.Utils.CLILog(`Deleting${guildId ? " guild" : ""} slash command "${cmd.name}"`);
+                cmd.delete();
+            }
+        }
+        return Promise.resolve(undefined);
     }
 }
 exports.default = CommandLoader;

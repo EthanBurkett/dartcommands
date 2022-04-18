@@ -14,9 +14,9 @@ export default class EventHandler {
   ) {
     events.map((Event: IEvent) => {
       if (Event.once) {
-        client.once(Event.name, Event.run);
+        client.once(Event.name!, Event.run);
       } else {
-        client.on(Event.name, Event.run);
+        client.on(Event.name!, Event.run);
       }
     });
   }
