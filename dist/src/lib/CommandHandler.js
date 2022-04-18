@@ -154,7 +154,6 @@ class CommandHandler {
     }
     async InteractionEvent(interaction, instance, client) {
         var _a, _b, _c, _d, _e;
-        console.log(interaction);
         if (!interaction.isCommand)
             return;
         const { user, commandName, options, guild, channelId } = interaction;

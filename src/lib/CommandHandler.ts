@@ -236,7 +236,6 @@ export default class CommandHandler {
     instance: DartCommands,
     client: Client
   ) {
-    console.log(interaction);
     if (!interaction.isCommand) return;
     const { user, commandName, options, guild, channelId } = interaction;
     const member = interaction.member as GuildMember;
