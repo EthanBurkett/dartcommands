@@ -1,4 +1,4 @@
-import { Client, Collection } from "discord.js";
+import { Client, Collection, HexColorString } from "discord.js";
 import { Cache, ICache, IOptions, LANG_ENGLISH } from "../index.d";
 import CommandLoader from "./lib/CommandLoader";
 import CommandHandler from "./lib/CommandHandler";
@@ -25,6 +25,7 @@ export default class {
   private _prefix: string;
   private _commandLoader: any;
   private _eventHandler: any;
+  private _defaultColor: number;
   private _cache?: any = {
     GuildPrefixes: new Collection<string, string>(),
   };
@@ -32,6 +33,7 @@ export default class {
     this._client = client;
     this._options = options;
     this._prefix = "!";
+    this._defaultColor = 0xffffff;
     this._CommandLoader();
     this._EventHandler();
     if (options.mongo) this.Mongo();
@@ -82,5 +84,12 @@ export default class {
       Object.assign(Messages, props);
     }
     return this;
+  }
+  public defaultColor(color: number) {
+    this._defaultColor = color;
+    return this;
+  }
+  public get getDefaultColor() {
+    return this._defaultColor;
   }
 }

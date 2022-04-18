@@ -13,7 +13,7 @@ export default {
         title: `This guild's prefix is: ${
           GuildPrefix ? GuildPrefix : instance!.prefix
         }`,
-        color: "GREEN",
+        color: instance?.getDefaultColor
       });
     }
     const newPrefix = args![0].toLowerCase();

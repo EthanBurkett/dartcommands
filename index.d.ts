@@ -10,7 +10,6 @@ import {
   DMChannel,
   PermissionString,
 } from "discord.js";
-import e from "express";
 
 export interface IOptions {
   prefix?: string;
@@ -20,6 +19,7 @@ export interface IOptions {
   ignoreBots?: true | false;
   testServers?: string[];
   typescript?: boolean;
+  disabledDefaultCommands?: string[];
   mongo?: {
     uri: string;
     options?: {};
@@ -74,6 +74,8 @@ export default class DartCommands {
   public get Cache(): Cache;
   public UpdatePrefix(guildId: string, newPrefix: string);
   public setLanguageSettings(props: LANG_ENGLISH): any;
+  public defaultColor(color: string);
+  public get getDefaultColor(): number;
 }
 
 export interface LANG_ENGLISH {

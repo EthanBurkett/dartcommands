@@ -48,6 +48,50 @@ client.on('ready', () => {
 })
 ```
 
+## Custom Messages
+
+You can integrate your own custom messages when an error occurs like too many arguments, not enough arguments, the default prefix message, etc.
+
+Custom messages can be strings or embeds. When using embeds variables are only applicable in the description property.
+
+```js
+new DartCommands(client, {
+  commandsDir: "Commands",
+}).setLanguageSettings({
+  minArgs:
+    "Supply at least {MIN} arguments. Syntax for this command is {EXPECTED}", // The 'expectedArgs' options is required in your commands to use the {EXPECTED} variable
+  maxArgs: new MessageEmbed({
+    title: "Too many arguments",
+    description: "You can only supply up to {MAX} arguments",
+  }),
+  noPermission: "You don't have permission to run this command.",
+  ownerOnly: `Only the bot owners can run this command`,
+  testOnly: `This command can not be run in this server`,
+  prefixUpdated: `Updated this guild's prefix to **{PREFIX}**`,
+});
+```
+
+## Default Embed Color
+
+You can set the embed color of embeds that are returned from internal commands like '!prefix'. Colors must be provided in a hex format using 0x{HEX}
+
+```js
+new DartCommands(client, {
+  commandsDir: "Commands",
+}).defaultColor(0x000000);
+```
+
+## Disabling default commands
+
+You can disable commands that come with DartCommands using the 'disabledDefaultCommands' property
+
+```js
+new DartCommands(client, {
+  commandsDir: "Commands",
+  disabledDefaultCommands: ["prefix"],
+});
+```
+
 ### And that's it! You can now start creating commands for your bot
 
 We're going to create a command that sends "Pong!" as a message

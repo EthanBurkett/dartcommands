@@ -26,7 +26,7 @@ export const Cache = {
     return Cache;
   },
   async UpdatePrefix(GuildID: string, Prefix: string) {
-    const res = await Prefixes.findOne({ GuildID, Prefix });
+    const res = await Prefixes.findOne({ GuildID });
     if (!res) {
       await Prefixes.create({
         GuildID,
