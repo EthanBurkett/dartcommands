@@ -13,6 +13,7 @@ import {
   ColorResolvable,
   Interaction,
 } from "discord.js";
+import { ConnectOptions } from "mongoose";
 
 export interface IOptions {
   prefix?: string;
@@ -25,7 +26,7 @@ export interface IOptions {
   disabledDefaultCommands?: string[];
   mongo?: {
     uri: string;
-    options?: {};
+    options?: ConnectOptions;
   };
 }
 
