@@ -104,6 +104,7 @@ export default class CommandLoader {
         }
 
         if (this._options.disabledDefaultCommands?.includes(name)) return;
+        if (name == "prefix" && !this._options.mongo) return;
 
         if (!Command.run) {
           console.log(
