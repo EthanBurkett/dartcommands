@@ -321,7 +321,7 @@ export default class CommandHandler {
       });
     }
 
-    let reply: { [key: string]: any } | string = Command.run({
+    let reply: { [key: string]: any } | string | undefined = Command.run({
       user,
       guild,
       channel,

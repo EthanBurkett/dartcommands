@@ -83,7 +83,8 @@ export interface ICommand {
         attachments?: any[];
       }
     | string
-    | MessageEmbed;
+    | MessageEmbed
+    | undefined;
 }
 
 export default class DartCommands {
