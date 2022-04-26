@@ -72,6 +72,7 @@ export interface ICommand {
   permission?: PermissionString;
   slash?: true | "both";
   options?: ApplicationCommandOptionData[];
+  [key: string]: any;
   run(obj: ExecuteOptions):
     | {
         custom?: boolean;

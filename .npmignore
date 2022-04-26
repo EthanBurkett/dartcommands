@@ -1,0 +1,6 @@
+node_modules
+nodemon.json
+.replit
+main.sh
+TEST
+replit.nix
