@@ -77,6 +77,8 @@ class CommandLoader {
             }
             if ((_a = this._options.disabledDefaultCommands) === null || _a === void 0 ? void 0 : _a.includes(name))
                 return;
+            if (name == "prefix" && !this._options.mongo)
+                return;
             if (!Command.run) {
                 console.log(chalk_1.default.red.bold(`Error: `) +
                     "No property named 'run' in command: " +

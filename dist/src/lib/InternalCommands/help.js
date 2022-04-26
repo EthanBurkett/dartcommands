@@ -103,9 +103,11 @@ exports.default = {
                     commands.map((Command, index) => {
                         if (!Command)
                             return;
-                        newEmbed.addField(`**${Command.name}**`, `${Command.description}\nSlash? ${Command.slash == true || Command.slash == "both"
-                            ? "yes"
-                            : "no"}\nLegacy? ${!Command.slash || Command.slash == "both" ? "yes" : "no"}`, false);
+                        newEmbed.addField(`**${Command.name}**${Command.aliases ? ` ${Command.aliases.join(", ")}` : ""}`, `${Command.description}${Command.expectedArgs
+                            ? `\nArguments: ${Command.expectedArgs}`
+                            : ""}${Command.permission
+                            ? `\nPermission: ${Command.permission}`
+                            : ""}${Command.minArgs ? `\nMinimum Args: ${Command.minArgs}` : ``}${Command.maxArgs ? `\nMaximum Args: ${Command.maxArgs}` : ``}`, false);
                     });
                 });
                 msg.edit({
