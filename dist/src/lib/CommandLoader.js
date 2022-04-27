@@ -16,9 +16,9 @@ class CommandLoader {
         this._client = client;
         this._options = options;
         this.load();
-        this.loadInternal();
     }
     async load() {
+        this.loadInternal();
         (await PG(`${path_1.default.join(process.cwd(), this._options.commandsDir)}/**/*.${this._options.typescript ? "ts" : "js"}`)).map((file) => {
             const L = file.split("/");
             let name = L[L.length - 1].substring(0, L[L.length - 1].length - 3);
@@ -55,6 +55,7 @@ class CommandLoader {
             }
             this._commands.set(name, Command);
         });
+        index_1.Utils.CLILog(`Loaded ${chalk_1.default.blueBright(`${this._commands.size}`)} command(s)`);
     }
     // TODO: Change to JS on production build
     async loadInternal() {
@@ -87,7 +88,6 @@ class CommandLoader {
             }
             this._commands.set(name, Command);
         });
-        index_1.Utils.CLILog(`Loaded ${chalk_1.default.blueBright(this._commands.size)} command(s)`);
     }
     get commands() {
         return this._commands;

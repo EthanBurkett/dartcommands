@@ -22,10 +22,10 @@ export default class CommandLoader {
     this._client = client;
     this._options = options;
     this.load();
-    this.loadInternal();
   }
 
   private async load() {
+    this.loadInternal();
     (
       await PG(
         `${path.join(process.cwd(), this._options.commandsDir)}/**/*.${
@@ -79,6 +79,9 @@ export default class CommandLoader {
 
       this._commands.set(name, Command);
     });
+    Utils.CLILog(
+      `Loaded ${chalk.blueBright(`${this._commands.size}`)} command(s)`
+    );
   }
 
   // TODO: Change to JS on production build
@@ -118,7 +121,6 @@ export default class CommandLoader {
         this._commands.set(name, Command);
       }
     );
-    Utils.CLILog(`Loaded ${chalk.blueBright(this._commands.size)} command(s)`);
   }
 
   public get commands() {
