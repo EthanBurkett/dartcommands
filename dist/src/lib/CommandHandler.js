@@ -138,7 +138,7 @@ class CommandHandler {
         }
         const inst = instance;
         let result = Command.run({
-            args,
+            args: args,
             channel: message.channel,
             guild: message.guild,
             instance: inst,
@@ -154,7 +154,7 @@ class CommandHandler {
     }
     async InteractionEvent(interaction, instance, client) {
         var _a, _b, _c, _d, _e;
-        if (!interaction.isCommand)
+        if (!interaction.isCommand())
             return;
         const { user, commandName, options, guild, channelId } = interaction;
         const member = interaction.member;
@@ -163,17 +163,18 @@ class CommandHandler {
         if (!Command)
             return;
         if (!Command.slash)
-            return interaction.reply({
-                embeds: [
-                    new discord_js_1.MessageEmbed()
-                        .setDescription("That command is slash disabled.")
-                        .setColor("RED"),
-                ],
-            });
+            if (interaction)
+                return interaction.reply({
+                    embeds: [
+                        new discord_js_1.MessageEmbed()
+                            .setDescription("That command is slash disabled.")
+                            .setColor("RED"),
+                    ],
+                });
         if (Command.permission) {
             if (!permissions_1.permissionList.includes(Command.permission))
                 throw new Error(`Dart | "${Command.permission}" is an invalid permission node.`);
-            if (!((_a = interaction.member) === null || _a === void 0 ? void 0 : _a.permissions.has(Command.permission))) {
+            if (!((_a = interaction.memberPermissions) === null || _a === void 0 ? void 0 : _a.has(Command.permission))) {
                 let msg = english_1.Messages.noPermission;
                 if (typeof msg == "object") {
                     msg.description = (_b = msg.description) === null || _b === void 0 ? void 0 : _b.replace(/{PERMISSION}/g, `${Command.permission}`);
@@ -193,7 +194,7 @@ class CommandHandler {
             throw new Error(`${Command.name} has property "ownerOnly" but "botOwners" is not defined in the setup method.`);
         if (Command.ownerOnly &&
             instance.settings.botOwners &&
-            !((_c = instance.settings.botOwners) === null || _c === void 0 ? void 0 : _c.includes(interaction.author.id))) {
+            !((_c = instance.settings.botOwners) === null || _c === void 0 ? void 0 : _c.includes(interaction.user.id))) {
             if (!(english_1.Messages === null || english_1.Messages === void 0 ? void 0 : english_1.Messages.ownerOnly))
                 return;
             if (typeof (english_1.Messages === null || english_1.Messages === void 0 ? void 0 : english_1.Messages.ownerOnly) == "object") {
@@ -222,11 +223,11 @@ class CommandHandler {
             });
         }
         let reply = Command.run({
-            user,
-            guild,
-            channel,
+            user: interaction.user,
+            guild: interaction.guild,
+            channel: interaction.channel,
             member,
-            interaction,
+            interaction: interaction,
             instance: this._instance,
         });
         if (reply instanceof Promise)

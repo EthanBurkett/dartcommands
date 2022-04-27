@@ -9,6 +9,7 @@ import {
   Permissions,
   CacheType,
   Interaction,
+  CommandInteraction,
 } from "discord.js";
 import { IOptions, ICommand, ExecuteOptions } from "../../index.d";
 import DartCommands from "../index";
@@ -215,15 +216,15 @@ export default class CommandHandler {
     const inst: any = instance;
 
     let result = Command.run({
-      args,
+      args: args!,
       channel: message.channel!,
       guild: message.guild!,
-      instance: inst,
+      instance: inst!,
       member: message.member!,
       message: message!,
-      text: args.join(" "),
+      text: args.join(" ")!,
       user: message.author!,
-      client: this._client,
+      client: this._client!,
     });
 
     if (result instanceof Promise) result = await result;
@@ -232,11 +233,11 @@ export default class CommandHandler {
   }
 
   private async InteractionEvent(
-    interaction: any,
+    interaction: CommandInteraction | Interaction<CacheType>,
     instance: DartCommands,
     client: Client
   ) {
-    if (!interaction.isCommand) return;
+    if (!interaction.isCommand()) return;
     const { user, commandName, options, guild, channelId } = interaction;
     const member = interaction.member as GuildMember;
     const channel = guild?.channels.cache.get(channelId) || null;
@@ -245,20 +246,21 @@ export default class CommandHandler {
     if (!Command) return;
 
     if (!Command.slash)
-      return interaction.reply({
-        embeds: [
-          new MessageEmbed()
-            .setDescription("That command is slash disabled.")
-            .setColor("RED"),
-        ],
-      });
+      if (interaction)
+        return interaction.reply({
+          embeds: [
+            new MessageEmbed()
+              .setDescription("That command is slash disabled.")
+              .setColor("RED"),
+          ],
+        });
 
     if (Command.permission) {
       if (!permissionList.includes(Command.permission))
         throw new Error(
           `Dart | "${Command.permission}" is an invalid permission node.`
         );
-      if (!interaction.member?.permissions.has(Command.permission)) {
+      if (!interaction.memberPermissions?.has(Command.permission)) {
         let msg = Messages.noPermission;
         if (typeof msg == "object") {
           msg.description = msg.description?.replace(
@@ -285,7 +287,7 @@ export default class CommandHandler {
     if (
       Command.ownerOnly &&
       instance.settings.botOwners &&
-      !instance.settings.botOwners?.includes(interaction.author.id)
+      !instance.settings.botOwners?.includes(interaction.user.id)
     ) {
       if (!Messages?.ownerOnly) return;
       if (typeof Messages?.ownerOnly == "object") {
@@ -322,11 +324,11 @@ export default class CommandHandler {
     }
 
     let reply: { [key: string]: any } | string | undefined = Command.run({
-      user,
-      guild,
-      channel,
+      user: interaction.user!,
+      guild: interaction.guild!,
+      channel: interaction.channel!,
       member,
-      interaction,
+      interaction: interaction!,
       instance: this._instance,
     });
 
