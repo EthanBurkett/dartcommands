@@ -54,4 +54,8 @@ export default class EventLoader {
       throw new Error(e);
     }
   }
+
+  public get events(): Collection<string, IEvent> {
+    return this._events;
+  }
 }

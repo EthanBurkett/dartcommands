@@ -63,6 +63,9 @@ class default_1 {
     get prefix() {
         return this._prefix;
     }
+    get events() {
+        return this._eventHandler.events;
+    }
     get commands() {
         return this._commandLoader.commands;
     }

@@ -46,5 +46,8 @@ class EventLoader {
             throw new Error(e);
         }
     }
+    get events() {
+        return this._events;
+    }
 }
 exports.default = EventLoader;

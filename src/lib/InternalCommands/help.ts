@@ -78,8 +78,8 @@ export default {
         if (!Command) return;
         embed.addField(
           `**${Command.name!}**${
-            Command.aliases ? ` ${Command.aliases.join(", ")}` : ""
-          }`,
+            Command.aliases ? ` [${Command.aliases.join(", ")}]` : ""
+          }${Command.slash === true ? " | SLASH ONLY" : ""}`,
           `${Command.description}${
             Command.expectedArgs ? `\nArguments: ${Command.expectedArgs}` : ""
           }${Command.permission ? `\nPermission: ${Command.permission}` : ""}${
@@ -141,8 +141,8 @@ export default {
               if (!Command) return;
               newEmbed.addField(
                 `**${Command.name!}**${
-                  Command.aliases ? ` ${Command.aliases.join(", ")}` : ""
-                }`,
+                  Command.aliases ? ` [${Command.aliases.join(", ")}]` : ""
+                }${Command.slash === true ? " | SLASH ONLY" : ""}`,
                 `${Command.description}${
                   Command.expectedArgs
                     ? `\nArguments: ${Command.expectedArgs}`

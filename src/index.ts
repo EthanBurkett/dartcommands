@@ -75,6 +75,9 @@ export default class {
   public get prefix() {
     return this._prefix;
   }
+  public get events() {
+    return this._eventHandler.events;
+  }
   public get commands() {
     return this._commandLoader.commands;
   }

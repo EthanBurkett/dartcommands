@@ -54,7 +54,7 @@ exports.default = {
             commands.map((Command, index) => {
                 if (!Command)
                     return;
-                embed.addField(`**${Command.name}**${Command.aliases ? ` ${Command.aliases.join(", ")}` : ""}`, `${Command.description}${Command.expectedArgs ? `\nArguments: ${Command.expectedArgs}` : ""}${Command.permission ? `\nPermission: ${Command.permission}` : ""}${Command.minArgs ? `\nMinimum Args: ${Command.minArgs}` : ``}${Command.maxArgs ? `\nMaximum Args: ${Command.maxArgs}` : ``}`, false);
+                embed.addField(`**${Command.name}**${Command.aliases ? ` [${Command.aliases.join(", ")}]` : ""}${Command.slash === true ? " | SLASH ONLY" : ""}`, `${Command.description}${Command.expectedArgs ? `\nArguments: ${Command.expectedArgs}` : ""}${Command.permission ? `\nPermission: ${Command.permission}` : ""}${Command.minArgs ? `\nMinimum Args: ${Command.minArgs}` : ``}${Command.maxArgs ? `\nMaximum Args: ${Command.maxArgs}` : ``}`, false);
             });
         });
         message
@@ -103,7 +103,7 @@ exports.default = {
                     commands.map((Command, index) => {
                         if (!Command)
                             return;
-                        newEmbed.addField(`**${Command.name}**${Command.aliases ? ` ${Command.aliases.join(", ")}` : ""}`, `${Command.description}${Command.expectedArgs
+                        newEmbed.addField(`**${Command.name}**${Command.aliases ? ` [${Command.aliases.join(", ")}]` : ""}${Command.slash === true ? " | SLASH ONLY" : ""}`, `${Command.description}${Command.expectedArgs
                             ? `\nArguments: ${Command.expectedArgs}`
                             : ""}${Command.permission
                             ? `\nPermission: ${Command.permission}`
