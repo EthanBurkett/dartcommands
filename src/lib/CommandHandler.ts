@@ -61,7 +61,6 @@ export default class CommandHandler {
       args[0].substring(Prefix.length, args[0].length)
     );
 
-    args = args.slice(1);
     if (!Command)
       Command = Commands.find(
         (cmd) =>
@@ -69,6 +68,7 @@ export default class CommandHandler {
           cmd.aliases.includes(args[0].substring(Prefix.length, args[0].length))
       );
     if (!Command) return;
+    args = args.slice(1);
     if (Command.slash === true) return;
 
     if (!Command.description)
