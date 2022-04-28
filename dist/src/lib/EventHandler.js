@@ -8,11 +8,11 @@ class EventHandler {
         events.map((Event) => {
             if (Event.once) {
                 /* eslint-disable */
-                client.once(Event.name, (...props) => Event.run(...props, client));
+                client.once(Event.name, (...props) => Event.run(props, client));
                 /* eslint-enable */
             }
             else {
-                client.on(Event.name, (...props) => Event.run(...props, client));
+                client.on(Event.name, (...props) => Event.run(props, client));
             }
         });
     }

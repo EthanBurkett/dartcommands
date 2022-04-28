@@ -10,8 +10,19 @@ const index_1 = require("../index");
 const Prefixes_1 = __importDefault(require("../Models/Prefixes"));
 async function Connect(uri, dbOptions = {}) {
     const options = Object.assign({ keepAlive: true }, dbOptions);
-    await mongoose_1.default.connect(uri, options);
-    index_1.Utils.CLILog("Mongo connected");
+    try {
+        await mongoose_1.default
+            .connect(uri, options)
+            .catch((e) => {
+            index_1.Utils.CLIError("Mongo: " + e);
+            process.exit(0);
+        })
+            .then(() => index_1.Utils.CLILog("Mongo connected"));
+    }
+    catch (e) {
+        index_1.Utils.CLIError("Mongo: " + e);
+        process.exit(0);
+    }
 }
 exports.Connect = Connect;
 exports.Cache = {

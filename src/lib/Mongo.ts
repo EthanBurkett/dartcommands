@@ -10,10 +10,16 @@ export async function Connect(uri: string, dbOptions = {}) {
     ...dbOptions,
   };
   try {
-    await mongoose.createConnection(uri, options);
-    Utils.CLILog("Mongo connected");
+    await mongoose
+      .connect(uri, options)
+      .catch((e: any) => {
+        Utils.CLIError("Mongo: " + e);
+        process.exit(0);
+      })
+      .then(() => Utils.CLILog("Mongo connected"));
   } catch (e) {
     Utils.CLIError("Mongo: " + e);
+    process.exit(0);
   }
 }
 
