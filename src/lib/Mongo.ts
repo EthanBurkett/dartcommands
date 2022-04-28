@@ -9,8 +9,12 @@ export async function Connect(uri: string, dbOptions = {}) {
     keepAlive: true,
     ...dbOptions,
   };
-  await mongoose.connect(uri, options);
-  Utils.CLILog("Mongo connected");
+  try {
+    await mongoose.createConnection(uri, options);
+    Utils.CLILog("Mongo connected");
+  } catch (e) {
+    Utils.CLIError("Mongo: " + e);
+  }
 }
 
 export const Cache = {
