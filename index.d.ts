@@ -33,7 +33,7 @@ export interface IOptions {
 export interface IEvent {
   name?: string;
   once?: boolean;
-  run(...props: any[], client: Client): any;
+  run(...props: any, client?: Client): any;
 }
 
 export interface ExecuteOptions {

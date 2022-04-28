@@ -7,10 +7,12 @@ class EventHandler {
     constructor(client, options, events) {
         events.map((Event) => {
             if (Event.once) {
-                client.once(Event.name, (...args) => Event.run(args, client));
+                /* eslint-disable */
+                client.once(Event.name, (...props) => Event.run(...props, client));
+                /* eslint-enable */
             }
             else {
-                client.on(Event.name, (...args) => Event.run(args, client));
+                client.on(Event.name, (...props) => Event.run(...props, client));
             }
         });
     }
