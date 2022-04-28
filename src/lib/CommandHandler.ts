@@ -246,14 +246,13 @@ export default class CommandHandler {
     if (!Command) return;
 
     if (!Command.slash)
-      if (interaction)
-        return interaction.reply({
-          embeds: [
-            new MessageEmbed()
-              .setDescription("That command is slash disabled.")
-              .setColor("RED"),
-          ],
-        });
+      return interaction.reply({
+        embeds: [
+          new MessageEmbed()
+            .setDescription("That command is slash disabled.")
+            .setColor("RED"),
+        ],
+      });
 
     if (Command.permission) {
       if (!permissionList.includes(Command.permission))
