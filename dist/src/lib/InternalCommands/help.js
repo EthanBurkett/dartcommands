@@ -24,7 +24,10 @@ exports.default = {
             .setStyle("PRIMARY"), new discord_js_1.MessageButton()
             .setCustomId("previous")
             .setLabel("<")
-            .setStyle("PRIMARY"), new discord_js_1.MessageButton().setCustomId("next").setLabel(">").setStyle("PRIMARY"), new discord_js_1.MessageButton().setCustomId("last").setLabel(">>").setStyle("PRIMARY"));
+            .setStyle("SECONDARY"), new discord_js_1.MessageButton()
+            .setCustomId("next")
+            .setLabel(">")
+            .setStyle("SECONDARY"), new discord_js_1.MessageButton().setCustomId("last").setLabel(">>").setStyle("PRIMARY"));
         let page = parseInt(args[0]);
         if (!page)
             page = 1;

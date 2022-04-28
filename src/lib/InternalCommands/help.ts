@@ -43,8 +43,11 @@ export default {
       new MessageButton()
         .setCustomId("previous")
         .setLabel("<")
-        .setStyle("PRIMARY"),
-      new MessageButton().setCustomId("next").setLabel(">").setStyle("PRIMARY"),
+        .setStyle("SECONDARY"),
+      new MessageButton()
+        .setCustomId("next")
+        .setLabel(">")
+        .setStyle("SECONDARY"),
       new MessageButton().setCustomId("last").setLabel(">>").setStyle("PRIMARY")
     );
     let page = parseInt(args![0]);

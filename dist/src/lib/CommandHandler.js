@@ -163,14 +163,13 @@ class CommandHandler {
         if (!Command)
             return;
         if (!Command.slash)
-            if (interaction)
-                return interaction.reply({
-                    embeds: [
-                        new discord_js_1.MessageEmbed()
-                            .setDescription("That command is slash disabled.")
-                            .setColor("RED"),
-                    ],
-                });
+            return interaction.reply({
+                embeds: [
+                    new discord_js_1.MessageEmbed()
+                        .setDescription("That command is slash disabled.")
+                        .setColor("RED"),
+                ],
+            });
         if (Command.permission) {
             if (!permissions_1.permissionList.includes(Command.permission))
                 throw new Error(`Dart | "${Command.permission}" is an invalid permission node.`);
