@@ -30,15 +30,10 @@ export interface IOptions {
   };
 }
 
-export interface IEventObject {
-  client: Client;
-  [key: string]: any;
-}
-
 export interface IEvent {
   name?: string;
   once?: boolean;
-  run(obj: IEventObject): any;
+  run(...props: any[], client: Client): any;
 }
 
 export interface ExecuteOptions {

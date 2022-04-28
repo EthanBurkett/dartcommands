@@ -7,10 +7,10 @@ class EventHandler {
     constructor(client, options, events) {
         events.map((Event) => {
             if (Event.once) {
-                client.once(Event.name, Event.run);
+                client.once(Event.name, (...args) => Event.run(args, client));
             }
             else {
-                client.on(Event.name, Event.run);
+                client.on(Event.name, (...args) => Event.run(args, client));
             }
         });
     }
