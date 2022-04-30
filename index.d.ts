@@ -30,12 +30,6 @@ export interface IOptions {
   };
 }
 
-export interface IEvent {
-  name?: string;
-  once?: boolean;
-  run(props: any[], client?: Client);
-}
-
 export interface ExecuteOptions {
   user?: User;
   options?: CommandInteractionOption[];
@@ -116,4 +110,8 @@ export interface Cache {
 
 export interface ICache {
   GuildPrefixes?: Collection<string, string>;
+}
+
+export interface EventConfig {
+  name?: string;
 }

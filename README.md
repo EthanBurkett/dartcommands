@@ -170,29 +170,33 @@ export default {
 You can implement your own events through custom files, keeping your events organized.
 Simply create a folder named 'Events' and add the 'eventsDir' to the options in the DartCommands initializer in index.js
 
-`Events/messageCreate.js`
+`Events/message.js`
 
 ```js
-module.exports = {
-  name: 'messageCreate',
-  once?: true | false, // If set to true, the event will only be ran once
-  async run(message) {
-    if(message.author.bot) return
-    console.log(message.channel)
-  }
-}
+module.exports = (client, instance) => {
+  client.on("messageCreate", (message) => {
+    // do stuff here
+  });
+};
+
+module.exports.config = {
+  name: "message",
+};
 ```
 
 #### With TypeScript
 
 ```ts
-import { IEvent } from "dartcommands";
+import { Client } from "discord.js";
+import DartCommands from "dartcommands";
 
-export default {
-  name: "messageCreate",
-  async run(message) {
-    if (message.author.bot) return;
-    console.log(message.channel);
-  },
-} as IEvent;
+export default (client: Client, instance: DartCommands) => {
+  client.on("messageCreate", () => {
+    // do stuff here
+  });
+};
+
+export const config = {
+  name: "message",
+};
 ```

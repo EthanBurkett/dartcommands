@@ -3,7 +3,6 @@ import { Cache, ICache, IOptions, LANG_ENGLISH } from "../index.d";
 import CommandLoader from "./lib/CommandLoader";
 import CommandHandler from "./lib/CommandHandler";
 import { Messages } from "./lang/english";
-import EventHandler from "./lib/EventHandler";
 import EventLoader from "./lib/EventLoader";
 import { Connect, Cache as cache } from "./lib/Mongo";
 import chalk from "chalk";
@@ -63,7 +62,7 @@ export default class {
   }
   private _EventHandler() {
     if (!this._options.eventsDir) return;
-    this._eventHandler = new EventLoader(this._client, this._options);
+    this._eventHandler = new EventLoader(this._client, this._options, this);
   }
   public defaultPrefix(p: string) {
     this._prefix = p;

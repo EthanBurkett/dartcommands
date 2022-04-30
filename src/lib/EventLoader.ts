@@ -1,61 +1,49 @@
 import { Client, Collection } from "discord.js";
-import { IEvent, IOptions } from "../../index.d";
-import path from "path";
+import { EventConfig, IOptions } from "../..";
 import { glob } from "glob";
 import { promisify } from "util";
-import EventHandler from "./EventHandler";
-import { Utils } from "../index";
-import chalk from "chalk";
+import path from "path";
+import { Utils } from "..";
+import DartCommands from "..";
 const PG = promisify(glob);
 
 export default class EventLoader {
-  private _options: IOptions;
   private _client: Client;
-  private _events: Collection<string, IEvent>;
-  constructor(client: Client, options: IOptions) {
-    this._client = client;
-    this._options = options;
-    this._events = new Collection();
-    this.handleFiles();
-  }
-  private async handleFiles() {
-    if (!this._options.eventsDir) return;
-    try {
-      (
-        await PG(
-          `${path.join(process.cwd(), this._options.eventsDir)}/**/*.${
-            this._options.typescript ? "ts" : "js"
-          }`
-        )
-      ).map((file: any) => {
-        let Event: IEvent = this._options.typescript
-          ? require(file).default
-          : require(file);
-        const L = file.split("/");
-        let name = L[L.length - 1].substring(0, L[L.length - 1].length - 3);
-
-        if (!Event) throw new Error(`Error loading events`);
-        if (!Event.name) {
-          Event.name = name;
-        }
-        if (!Event.run) {
-          Utils.CLIError(
-            chalk.bold(`${name}`),
-            'is missing the required "run" property.'
-          );
-          process.exit(0);
-        }
-
-        this._events.set(Event.name!, Event);
-      });
-      Utils.CLILog(`Loaded ${chalk.blueBright(this._events.size)} event(s)`);
-      new EventHandler(this._client, this._options, this._events);
-    } catch (e: any) {
-      throw new Error(e);
-    }
+  private _instance: DartCommands;
+  private _options: IOptions;
+  private _eventConfigs: Collection<string, EventConfig>;
+  constructor(client: Client, options: IOptions, instance: DartCommands) {
+    (this._client = client),
+      (this._instance = instance),
+      (this._options = options);
+    this._eventConfigs = new Collection();
   }
 
-  public get events(): Collection<string, IEvent> {
-    return this._events;
+  private async Load() {
+    (
+      await PG(
+        `${path.join(process.cwd(), this._options.commandsDir)}/**/*.${
+          this._options.typescript ? "ts" : "js"
+        }`
+      )
+    ).map(async (file) => {
+      const L = file.split("/");
+      let name = L[L.length - 1].substring(0, L[L.length - 1].length - 3);
+      let func: any = this._options.typescript
+        ? require(file).default
+        : require(file);
+
+      const { config }: { config: EventConfig } = func;
+      if (!config) {
+        Utils.CLIError(`${name} is missing the config export.`);
+        process.exit(0);
+      }
+      if (!config.name) {
+        Utils.CLIError(`${name} missing an event name`);
+        process.exit(0);
+      }
+
+      func(this._client, this._instance);
+    });
   }
 }
