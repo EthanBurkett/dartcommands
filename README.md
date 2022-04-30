@@ -173,7 +173,7 @@ Simply create a folder named 'Events' and add the 'eventsDir' to the options in 
 `Events/message.js`
 
 ```js
-module.exports = (client, instance) => {
+module.exports.run = (client, instance) => {
   client.on("messageCreate", (message) => {
     // do stuff here
   });
@@ -190,7 +190,7 @@ module.exports.config = {
 import { Client } from "discord.js";
 import DartCommands from "dartcommands";
 
-export default (client: Client, instance: DartCommands) => {
+export const run = (client: Client, instance: DartCommands) => {
   client.on("messageCreate", () => {
     // do stuff here
   });

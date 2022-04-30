@@ -17,23 +17,32 @@ export default class EventLoader {
       (this._instance = instance),
       (this._options = options);
     this._eventConfigs = new Collection();
+    this.Load();
   }
 
   private async Load() {
     (
       await PG(
-        `${path.join(process.cwd(), this._options.commandsDir)}/**/*.${
+        `${path.join(process.cwd(), this._options.eventsDir!)}/**/*.${
           this._options.typescript ? "ts" : "js"
         }`
       )
     ).map(async (file) => {
       const L = file.split("/");
       let name = L[L.length - 1].substring(0, L[L.length - 1].length - 3);
-      let func: any = this._options.typescript
-        ? require(file).default
-        : require(file);
+      let func: any = require(file).default
+        ? require(file).default.run
+        : require(file).run;
+      let config: EventConfig = require(file).default
+        ? require(file).default.config
+        : require(file).config;
 
-      const { config }: { config: EventConfig } = func;
+      if (!func || typeof func != "function") {
+        Utils.CLIError(
+          `${name} needs to have a 'run' export that is a function.`
+        );
+        process.exit(0);
+      }
       if (!config) {
         Utils.CLIError(`${name} is missing the config export.`);
         process.exit(0);
