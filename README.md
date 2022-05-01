@@ -2,6 +2,10 @@
 
 Dart Commands is a simple command handler to easily create discord bots meant to be lightweight.
 
+## Ongoing Development
+
+You can see the bot currently being developed with DartCommands [here](https://www.github.com/ethanburkett/slitherbot)
+
 ## Getting started
 
 To get started with DartCommands just install the package globally and run the CLI tool that automatically creates a boiler plate template
