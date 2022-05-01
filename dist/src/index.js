@@ -51,7 +51,7 @@ class default_1 {
     _EventHandler() {
         if (!this._options.eventsDir)
             return;
-        this._eventHandler = new EventLoader_1.default(this._client, this._options);
+        this._eventHandler = new EventLoader_1.default(this._client, this._options, this);
     }
     defaultPrefix(p) {
         this._prefix = p;

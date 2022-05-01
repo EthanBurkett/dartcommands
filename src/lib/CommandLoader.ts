@@ -24,6 +24,34 @@ export default class CommandLoader {
     this.load();
   }
 
+  private checkUnusedSlash() {
+    Utils.CLILog("Checking for unused slash commands...");
+    this._client.guilds.cache.map(async (guild) => {
+      await guild.commands.fetch();
+      guild.commands.cache.map((slash) => {
+        const cmd = this._commands.find((cmd) => cmd.name == slash.name);
+        if (!cmd) return;
+        if (!cmd.slash) {
+          slash.delete();
+          Utils.CLILog(
+            `Removing guild slash command ${cmd.name} due to property "slash" being disabled.`
+          );
+        }
+      });
+    });
+
+    this._client.application?.commands.cache.map((slash) => {
+      const cmd = this._commands.find((cmd) => cmd.name == slash.name);
+      if (!cmd) return;
+      if (!cmd.slash) {
+        slash.delete();
+        Utils.CLILog(
+          `Removing client slash command due to property "slash" being disabled.`
+        );
+      }
+    });
+  }
+
   private async load() {
     this.loadInternal();
     (
@@ -79,6 +107,7 @@ export default class CommandLoader {
 
       this._commands.set(name, Command);
     });
+    this.checkUnusedSlash();
     Utils.CLILog(
       `Loaded ${chalk.blueBright(`${this._commands.size}`)} command(s)`
     );
@@ -226,7 +255,7 @@ export default class CommandLoader {
       const cmd = commands.cache.get(commandId);
       if (cmd) {
         Utils.CLILog(
-          `Deleting${guildId ? " guild" : ""} slash command "${cmd.name}"`
+          `Deleted${guildId ? " guild" : ""} slash command "${cmd.name}".`
         );
 
         cmd.delete();

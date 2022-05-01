@@ -17,6 +17,31 @@ class CommandLoader {
         this._options = options;
         this.load();
     }
+    checkUnusedSlash() {
+        var _a;
+        index_1.Utils.CLILog("Checking for unused slash commands...");
+        this._client.guilds.cache.map(async (guild) => {
+            await guild.commands.fetch();
+            guild.commands.cache.map((slash) => {
+                const cmd = this._commands.find((cmd) => cmd.name == slash.name);
+                if (!cmd)
+                    return;
+                if (!cmd.slash) {
+                    slash.delete();
+                    index_1.Utils.CLILog(`Removing guild slash command ${cmd.name} due to property "slash" being disabled.`);
+                }
+            });
+        });
+        (_a = this._client.application) === null || _a === void 0 ? void 0 : _a.commands.cache.map((slash) => {
+            const cmd = this._commands.find((cmd) => cmd.name == slash.name);
+            if (!cmd)
+                return;
+            if (!cmd.slash) {
+                slash.delete();
+                index_1.Utils.CLILog(`Removing client slash command due to property "slash" being disabled.`);
+            }
+        });
+    }
     async load() {
         this.loadInternal();
         (await PG(`${path_1.default.join(process.cwd(), this._options.commandsDir)}/**/*.${this._options.typescript ? "ts" : "js"}`)).map((file) => {
@@ -55,6 +80,7 @@ class CommandLoader {
             }
             this._commands.set(name, Command);
         });
+        this.checkUnusedSlash();
         index_1.Utils.CLILog(`Loaded ${chalk_1.default.blueBright(`${this._commands.size}`)} command(s)`);
     }
     // TODO: Change to JS on production build
@@ -156,7 +182,7 @@ class CommandLoader {
         if (commands) {
             const cmd = commands.cache.get(commandId);
             if (cmd) {
-                index_1.Utils.CLILog(`Deleting${guildId ? " guild" : ""} slash command "${cmd.name}"`);
+                index_1.Utils.CLILog(`Deleted${guildId ? " guild" : ""} slash command "${cmd.name}".`);
                 cmd.delete();
             }
         }
