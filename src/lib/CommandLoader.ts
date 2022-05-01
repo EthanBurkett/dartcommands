@@ -40,6 +40,8 @@ export default class CommandLoader {
       });
     });
 
+    (async () => await this._client.application?.commands.fetch())();
+
     this._client.application?.commands.cache.map((slash) => {
       const cmd = this._commands.find((cmd) => cmd.name == slash.name);
       if (!cmd) return;

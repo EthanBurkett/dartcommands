@@ -32,6 +32,7 @@ class CommandLoader {
                 }
             });
         });
+        (async () => { var _a; return await ((_a = this._client.application) === null || _a === void 0 ? void 0 : _a.commands.fetch()); })();
         (_a = this._client.application) === null || _a === void 0 ? void 0 : _a.commands.cache.map((slash) => {
             const cmd = this._commands.find((cmd) => cmd.name == slash.name);
             if (!cmd)
