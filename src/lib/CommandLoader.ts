@@ -34,7 +34,7 @@ export default class CommandLoader {
         if (!cmd.slash) {
           slash.delete();
           Utils.CLILog(
-            `Removing guild slash command ${cmd.name} due to property "slash" being disabled.`
+            `Removing guild slash command "${cmd.name}" due to property "slash" being disabled.`
           );
         }
       });
@@ -48,7 +48,7 @@ export default class CommandLoader {
       if (!cmd.slash) {
         slash.delete();
         Utils.CLILog(
-          `Removing client slash command due to property "slash" being disabled.`
+          `Removing client slash command "${cmd.name}" due to property "slash" being disabled.`
         );
       }
     });
