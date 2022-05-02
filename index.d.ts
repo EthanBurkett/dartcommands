@@ -39,22 +39,22 @@ export interface IOptions {
 }
 
 export interface ExecuteOptions {
-  user?: User;
+  user: User;
   options?: CommandInteractionOption[];
   message?: Message<boolean>;
   interaction?: CommandInteraction<CacheType>;
-  guild?: Guild;
+  guild: Guild;
   args?: string[];
   text?: string;
-  client?: Client;
-  channel?:
+  client: Client;
+  channel:
     | DMChannel
     | PartialDMChannel
     | NewsChannel
     | TextChannel
     | ThreadChannel;
-  instance?: any;
-  member?: GuildMember;
+  instance: any;
+  member: GuildMember;
 }
 
 export interface ICommand {

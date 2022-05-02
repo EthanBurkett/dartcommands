@@ -213,9 +213,10 @@ class CommandHandler {
             user: interaction.user,
             guild: interaction.guild,
             channel: interaction.channel,
-            member,
+            member: member,
             interaction: interaction,
             instance: this._instance,
+            client: this._client,
         });
         if (reply instanceof Promise)
             reply = await reply;
