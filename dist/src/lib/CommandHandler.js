@@ -20,7 +20,7 @@ class CommandHandler {
         });
     }
     async handleMessage(message, instance) {
-        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        var _a, _b, _c, _d, _e, _f, _g;
         if (!message)
             return;
         if (((_a = message.member) === null || _a === void 0 ? void 0 : _a.user.id) == this._client.user.id)
@@ -124,20 +124,6 @@ class CommandHandler {
         }
         if (Command.testOnly && !instance.settings.testServers)
             throw new Error(`${Command.name} has property "testOnly" but "testServers" is not defined in the setup method.`);
-        if (Command.testOnly &&
-            instance.settings.testServers &&
-            !((_h = instance.settings.testServers) === null || _h === void 0 ? void 0 : _h.includes((_j = message.guild) === null || _j === void 0 ? void 0 : _j.id))) {
-            if (!(english_1.Messages === null || english_1.Messages === void 0 ? void 0 : english_1.Messages.testOnly))
-                return;
-            if (typeof (english_1.Messages === null || english_1.Messages === void 0 ? void 0 : english_1.Messages.testOnly) == "object") {
-                return message.reply({
-                    embeds: [english_1.Messages.testOnly],
-                });
-            }
-            return message.reply({
-                content: english_1.Messages === null || english_1.Messages === void 0 ? void 0 : english_1.Messages.testOnly,
-            });
-        }
         const inst = instance;
         let result = Command.run({
             args: args,

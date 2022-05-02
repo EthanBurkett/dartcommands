@@ -198,23 +198,6 @@ export default class CommandHandler {
         `${Command.name} has property "testOnly" but "testServers" is not defined in the setup method.`
       );
 
-    if (
-      Command.testOnly &&
-      instance.settings.testServers &&
-      !instance.settings.testServers?.includes(message.guild?.id!)
-    ) {
-      if (!Messages?.testOnly) return;
-      if (typeof Messages?.testOnly == "object") {
-        return message.reply({
-          embeds: [Messages.testOnly],
-        });
-      }
-
-      return message.reply({
-        content: Messages?.testOnly,
-      });
-    }
-
     const inst: any = instance;
 
     let result = Command.run({
