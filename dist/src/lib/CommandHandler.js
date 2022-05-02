@@ -21,7 +21,7 @@ class CommandHandler {
     }
     async handleMessage(message, instance) {
         var _a, _b, _c, _d, _e, _f, _g;
-        if (!message)
+        if (!message || !message.guild)
             return;
         if (((_a = message.member) === null || _a === void 0 ? void 0 : _a.user.id) == this._client.user.id)
             return;
