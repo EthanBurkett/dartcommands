@@ -12,6 +12,7 @@ import {
   HexColorString,
   ColorResolvable,
   Interaction,
+  ApplicationCommandOptionData,
 } from "discord.js";
 import { ConnectOptions } from "mongoose";
 
