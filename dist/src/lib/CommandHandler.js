@@ -20,10 +20,12 @@ class CommandHandler {
         });
     }
     async handleMessage(message, instance) {
-        var _a, _b, _c, _d, _e, _f, _g, _h;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         if (!message)
             return;
-        const Prefix = (_c = (_b = (_a = instance.Cache) === null || _a === void 0 ? void 0 : _a.GuildPrefixes) === null || _b === void 0 ? void 0 : _b.get(message.guild.id)) !== null && _c !== void 0 ? _c : instance.prefix;
+        if (((_a = message.member) === null || _a === void 0 ? void 0 : _a.user.id) == this._client.user.id)
+            return;
+        const Prefix = (_d = (_c = (_b = instance.Cache) === null || _b === void 0 ? void 0 : _b.GuildPrefixes) === null || _c === void 0 ? void 0 : _c.get(message.guild.id)) !== null && _d !== void 0 ? _d : instance.prefix;
         const MessagePrefix = message.content.substring(0, Prefix.length);
         let args = message.content.split(" ");
         if (Prefix !== MessagePrefix ||
@@ -44,10 +46,10 @@ class CommandHandler {
         if (Command.permission) {
             if (!permissions_1.permissionList.includes(Command.permission))
                 throw new Error(`Dart | "${Command.permission}" is an invalid permission node.`);
-            if (!((_d = message.member) === null || _d === void 0 ? void 0 : _d.permissions.has(Command.permission))) {
+            if (!((_e = message.member) === null || _e === void 0 ? void 0 : _e.permissions.has(Command.permission))) {
                 let msg = english_1.Messages.noPermission;
                 if (typeof msg == "object") {
-                    msg.description = (_e = msg.description) === null || _e === void 0 ? void 0 : _e.replace(/{PERMISSION}/g, `${Command.permission}`);
+                    msg.description = (_f = msg.description) === null || _f === void 0 ? void 0 : _f.replace(/{PERMISSION}/g, `${Command.permission}`);
                     return message.reply({
                         embeds: [msg],
                     });
@@ -108,7 +110,7 @@ class CommandHandler {
             throw new Error(`${Command.name} has property "ownerOnly" but "botOwners" is not defined in the setup method.`);
         if (Command.ownerOnly &&
             instance.settings.botOwners &&
-            !((_f = instance.settings.botOwners) === null || _f === void 0 ? void 0 : _f.includes(message.author.id))) {
+            !((_g = instance.settings.botOwners) === null || _g === void 0 ? void 0 : _g.includes(message.author.id))) {
             if (!(english_1.Messages === null || english_1.Messages === void 0 ? void 0 : english_1.Messages.ownerOnly))
                 return;
             if (typeof (english_1.Messages === null || english_1.Messages === void 0 ? void 0 : english_1.Messages.ownerOnly) == "object") {
@@ -124,7 +126,7 @@ class CommandHandler {
             throw new Error(`${Command.name} has property "testOnly" but "testServers" is not defined in the setup method.`);
         if (Command.testOnly &&
             instance.settings.testServers &&
-            !((_g = instance.settings.testServers) === null || _g === void 0 ? void 0 : _g.includes((_h = message.guild) === null || _h === void 0 ? void 0 : _h.id))) {
+            !((_h = instance.settings.testServers) === null || _h === void 0 ? void 0 : _h.includes((_j = message.guild) === null || _j === void 0 ? void 0 : _j.id))) {
             if (!(english_1.Messages === null || english_1.Messages === void 0 ? void 0 : english_1.Messages.testOnly))
                 return;
             if (typeof (english_1.Messages === null || english_1.Messages === void 0 ? void 0 : english_1.Messages.testOnly) == "object") {

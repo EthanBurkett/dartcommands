@@ -46,8 +46,10 @@ export default class CommandHandler {
     instance: DartCommands
   ) {
     if (!message) return;
+    if (message.member?.user.id == this._client!.user!.id) return;
     const Prefix: string =
       instance.Cache?.GuildPrefixes?.get(message.guild!.id) ?? instance.prefix;
+
     const MessagePrefix: string = message.content.substring(0, Prefix.length);
     let args: string[] = message.content.split(" ");
     if (
