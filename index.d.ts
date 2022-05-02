@@ -8,11 +8,18 @@ import {
   User,
   MessageEmbed,
   DMChannel,
+  PartialDMChannel,
+  NewsChannel,
+  TextChannel,
+  ThreadChannel,
   PermissionString,
   HexColorString,
   ColorResolvable,
   Interaction,
   ApplicationCommandOptionData,
+  CommandInteraction,
+  CacheType,
+  CommandInteractionOption,
 } from "discord.js";
 import { ConnectOptions } from "mongoose";
 
