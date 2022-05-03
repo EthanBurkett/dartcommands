@@ -11,7 +11,7 @@ import {
   Interaction,
   CommandInteraction,
 } from "discord.js";
-import { IOptions, ICommand, ExecuteOptions } from "../../index.d";
+import { IOptions, ICommand, ExecuteOptions, Events } from "../../index.d";
 import DartCommands from "../index";
 import { Messages } from "../lang/english";
 import { permissionList } from "../Validation/permissions";
@@ -215,6 +215,7 @@ export default class CommandHandler {
 
     if (result instanceof Promise) result = await result;
 
+    this._client.emit<Events>("Dart.LegacyCommand", Command!, message!);
     this.replyFromCallback(message, result);
   }
 
@@ -321,6 +322,7 @@ export default class CommandHandler {
 
     if (reply instanceof Promise) reply = await reply;
 
+    this._client.emit<Events>("Dart.SlashCommand", Command!, interaction!);
     this.replyFromCallback(interaction, reply);
   }
 

@@ -139,6 +139,7 @@ class CommandHandler {
         });
         if (result instanceof Promise)
             result = await result;
+        this._client.emit("Dart.LegacyCommand", Command, message);
         this.replyFromCallback(message, result);
     }
     async InteractionEvent(interaction, instance, client) {
@@ -222,6 +223,7 @@ class CommandHandler {
         });
         if (reply instanceof Promise)
             reply = await reply;
+        this._client.emit("Dart.SlashCommand", Command, interaction);
         this.replyFromCallback(interaction, reply);
     }
     replyFromCallback(msgOrInter, reply) {

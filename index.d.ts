@@ -123,3 +123,5 @@ export interface ICache {
 export interface EventConfig {
   name?: string;
 }
+
+export type Events = "Dart.LegacyCommand" | "Dart.SlashCommand";
