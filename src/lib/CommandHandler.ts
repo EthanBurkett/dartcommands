@@ -46,6 +46,8 @@ export default class CommandHandler {
     instance: DartCommands
   ) {
     if (!message || !message.guild) return;
+    if (this._options.ignoreDMs && message.channel.type == "DM")
+      return message.reply({ content: "DMs are disabled for this bot." });
     if (message.member?.user.id == this._client!.user!.id) return;
     const Prefix: string =
       instance.Cache?.GuildPrefixes?.get(message.guild!.id) ?? instance.prefix;
@@ -226,6 +228,8 @@ export default class CommandHandler {
   ) {
     if (!interaction.isCommand()) return;
     const { user, commandName, options, guild, channelId } = interaction;
+    if (this._options.ignoreDMs && interaction.channel?.type == "DM")
+      return interaction.reply({ content: "DMs are disabled for this bot." });
     const member = interaction.member as GuildMember;
     const channel = guild?.channels.cache.get(channelId) || null;
     let Command: ICommand | undefined =

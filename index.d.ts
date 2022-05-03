@@ -28,6 +28,7 @@ export interface IOptions {
   commandsDir: strinhg;
   eventsDir?: string;
   botOwners?: string[];
+  ignoreDMs?: boolean;
   ignoreBots?: true | false;
   testServers?: string[];
   typescript?: boolean;

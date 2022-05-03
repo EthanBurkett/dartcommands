@@ -23,6 +23,8 @@ class CommandHandler {
         var _a, _b, _c, _d, _e, _f, _g;
         if (!message || !message.guild)
             return;
+        if (this._options.ignoreDMs && message.channel.type == "DM")
+            return message.reply({ content: "DMs are disabled for this bot." });
         if (((_a = message.member) === null || _a === void 0 ? void 0 : _a.user.id) == this._client.user.id)
             return;
         const Prefix = (_d = (_c = (_b = instance.Cache) === null || _b === void 0 ? void 0 : _b.GuildPrefixes) === null || _c === void 0 ? void 0 : _c.get(message.guild.id)) !== null && _d !== void 0 ? _d : instance.prefix;
@@ -143,10 +145,12 @@ class CommandHandler {
         this.replyFromCallback(message, result);
     }
     async InteractionEvent(interaction, instance, client) {
-        var _a, _b, _c, _d, _e;
+        var _a, _b, _c, _d, _e, _f;
         if (!interaction.isCommand())
             return;
         const { user, commandName, options, guild, channelId } = interaction;
+        if (this._options.ignoreDMs && ((_a = interaction.channel) === null || _a === void 0 ? void 0 : _a.type) == "DM")
+            return interaction.reply({ content: "DMs are disabled for this bot." });
         const member = interaction.member;
         const channel = (guild === null || guild === void 0 ? void 0 : guild.channels.cache.get(channelId)) || null;
         let Command = this._instance.commands.get(commandName);
@@ -163,10 +167,10 @@ class CommandHandler {
         if (Command.permission) {
             if (!permissions_1.permissionList.includes(Command.permission))
                 throw new Error(`Dart | "${Command.permission}" is an invalid permission node.`);
-            if (!((_a = interaction.memberPermissions) === null || _a === void 0 ? void 0 : _a.has(Command.permission))) {
+            if (!((_b = interaction.memberPermissions) === null || _b === void 0 ? void 0 : _b.has(Command.permission))) {
                 let msg = english_1.Messages.noPermission;
                 if (typeof msg == "object") {
-                    msg.description = (_b = msg.description) === null || _b === void 0 ? void 0 : _b.replace(/{PERMISSION}/g, `${Command.permission}`);
+                    msg.description = (_c = msg.description) === null || _c === void 0 ? void 0 : _c.replace(/{PERMISSION}/g, `${Command.permission}`);
                     return interaction.reply({
                         embeds: [msg],
                     });
@@ -183,7 +187,7 @@ class CommandHandler {
             throw new Error(`${Command.name} has property "ownerOnly" but "botOwners" is not defined in the setup method.`);
         if (Command.ownerOnly &&
             instance.settings.botOwners &&
-            !((_c = instance.settings.botOwners) === null || _c === void 0 ? void 0 : _c.includes(interaction.user.id))) {
+            !((_d = instance.settings.botOwners) === null || _d === void 0 ? void 0 : _d.includes(interaction.user.id))) {
             if (!(english_1.Messages === null || english_1.Messages === void 0 ? void 0 : english_1.Messages.ownerOnly))
                 return;
             if (typeof (english_1.Messages === null || english_1.Messages === void 0 ? void 0 : english_1.Messages.ownerOnly) == "object") {
@@ -199,7 +203,7 @@ class CommandHandler {
             throw new Error(`${Command.name} has property "testOnly" but "testServers" is not defined in the setup method.`);
         if (Command.testOnly &&
             instance.settings.testServers &&
-            !((_d = instance.settings.testServers) === null || _d === void 0 ? void 0 : _d.includes((_e = interaction.guild) === null || _e === void 0 ? void 0 : _e.id))) {
+            !((_e = instance.settings.testServers) === null || _e === void 0 ? void 0 : _e.includes((_f = interaction.guild) === null || _f === void 0 ? void 0 : _f.id))) {
             if (!(english_1.Messages === null || english_1.Messages === void 0 ? void 0 : english_1.Messages.testOnly))
                 return;
             if (typeof (english_1.Messages === null || english_1.Messages === void 0 ? void 0 : english_1.Messages.testOnly) == "object") {
