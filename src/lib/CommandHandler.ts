@@ -53,8 +53,9 @@ export default class CommandHandler {
     if (this._options.ignoreDMs && message.channel.type == "DM")
       return message.reply({ content: "DMs are disabled for this bot." });
     if (message.member?.user.id == this._client!.user!.id) return;
-    const Prefix: string =
-      instance.Cache?.GuildPrefixes?.get(message.guild!.id) ?? instance.prefix;
+    const Prefix: string = message.guild
+      ? instance.Cache?.GuildPrefixes?.get(message.guild!.id) ?? instance.prefix
+      : instance.prefix;
 
     const MessagePrefix: string = message.content.substring(0, Prefix.length);
     let args: string[] = message.content.split(" ");
