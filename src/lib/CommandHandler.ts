@@ -45,7 +45,10 @@ export default class CommandHandler {
     message: Message<boolean>,
     instance: DartCommands
   ) {
-    if (!message || !message.guild) return;
+    if (!message || !message.guild)
+      return message.channel.send(
+        "Legacy commands may only be ran in servers."
+      );
     if (this._options.ignoreDMs && message.channel.type == "DM")
       return message.reply({ content: "DMs are disabled for this bot." });
     if (message.member?.user.id == this._client!.user!.id) return;

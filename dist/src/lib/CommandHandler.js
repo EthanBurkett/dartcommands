@@ -22,7 +22,7 @@ class CommandHandler {
     async handleMessage(message, instance) {
         var _a, _b, _c, _d, _e, _f, _g;
         if (!message || !message.guild)
-            return;
+            return message.channel.send("Legacy commands may only be ran in servers.");
         if (this._options.ignoreDMs && message.channel.type == "DM")
             return message.reply({ content: "DMs are disabled for this bot." });
         if (((_a = message.member) === null || _a === void 0 ? void 0 : _a.user.id) == this._client.user.id)
