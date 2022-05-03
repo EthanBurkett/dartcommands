@@ -20,14 +20,16 @@ class CommandHandler {
         });
     }
     async handleMessage(message, instance) {
-        var _a, _b, _c, _d, _e, _f, _g;
+        var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+        if (((_a = message.author) === null || _a === void 0 ? void 0 : _a.id) == ((_b = this._client.user) === null || _b === void 0 ? void 0 : _b.id))
+            return;
         if (!message.guild && message.content.startsWith(instance.prefix))
             return message.channel.send("Legacy commands may only be ran in servers.");
         if (this._options.ignoreDMs && message.channel.type == "DM")
             return message.reply({ content: "DMs are disabled for this bot." });
-        if (((_a = message.member) === null || _a === void 0 ? void 0 : _a.user.id) == this._client.user.id)
+        if (((_c = message.member) === null || _c === void 0 ? void 0 : _c.user.id) == this._client.user.id)
             return;
-        const Prefix = (_d = (_c = (_b = instance.Cache) === null || _b === void 0 ? void 0 : _b.GuildPrefixes) === null || _c === void 0 ? void 0 : _c.get(message.guild.id)) !== null && _d !== void 0 ? _d : instance.prefix;
+        const Prefix = (_f = (_e = (_d = instance.Cache) === null || _d === void 0 ? void 0 : _d.GuildPrefixes) === null || _e === void 0 ? void 0 : _e.get(message.guild.id)) !== null && _f !== void 0 ? _f : instance.prefix;
         const MessagePrefix = message.content.substring(0, Prefix.length);
         let args = message.content.split(" ");
         if (Prefix !== MessagePrefix ||
@@ -48,10 +50,10 @@ class CommandHandler {
         if (Command.permission) {
             if (!permissions_1.permissionList.includes(Command.permission))
                 throw new Error(`Dart | "${Command.permission}" is an invalid permission node.`);
-            if (!((_e = message.member) === null || _e === void 0 ? void 0 : _e.permissions.has(Command.permission))) {
+            if (!((_g = message.member) === null || _g === void 0 ? void 0 : _g.permissions.has(Command.permission))) {
                 let msg = english_1.Messages.noPermission;
                 if (typeof msg == "object") {
-                    msg.description = (_f = msg.description) === null || _f === void 0 ? void 0 : _f.replace(/{PERMISSION}/g, `${Command.permission}`);
+                    msg.description = (_h = msg.description) === null || _h === void 0 ? void 0 : _h.replace(/{PERMISSION}/g, `${Command.permission}`);
                     return message.reply({
                         embeds: [msg],
                     });
@@ -112,7 +114,7 @@ class CommandHandler {
             throw new Error(`${Command.name} has property "ownerOnly" but "botOwners" is not defined in the setup method.`);
         if (Command.ownerOnly &&
             instance.settings.botOwners &&
-            !((_g = instance.settings.botOwners) === null || _g === void 0 ? void 0 : _g.includes(message.author.id))) {
+            !((_j = instance.settings.botOwners) === null || _j === void 0 ? void 0 : _j.includes(message.author.id))) {
             if (!(english_1.Messages === null || english_1.Messages === void 0 ? void 0 : english_1.Messages.ownerOnly))
                 return;
             if (typeof (english_1.Messages === null || english_1.Messages === void 0 ? void 0 : english_1.Messages.ownerOnly) == "object") {
