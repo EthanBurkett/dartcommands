@@ -29,7 +29,9 @@ class CommandHandler {
             return message.reply({ content: "DMs are disabled for this bot." });
         if (((_c = message.member) === null || _c === void 0 ? void 0 : _c.user.id) == this._client.user.id)
             return;
-        const Prefix = (_f = (_e = (_d = instance.Cache) === null || _d === void 0 ? void 0 : _d.GuildPrefixes) === null || _e === void 0 ? void 0 : _e.get(message.guild.id)) !== null && _f !== void 0 ? _f : instance.prefix;
+        const Prefix = message.guild
+            ? (_f = (_e = (_d = instance.Cache) === null || _d === void 0 ? void 0 : _d.GuildPrefixes) === null || _e === void 0 ? void 0 : _e.get(message.guild.id)) !== null && _f !== void 0 ? _f : instance.prefix
+            : instance.prefix;
         const MessagePrefix = message.content.substring(0, Prefix.length);
         let args = message.content.split(" ");
         if (Prefix !== MessagePrefix ||
