@@ -45,7 +45,7 @@ export default class CommandHandler {
     message: Message<boolean>,
     instance: DartCommands
   ) {
-    if (!message || !message.guild)
+    if (!message.guild && message.content.startsWith(instance.prefix))
       return message.channel.send(
         "Legacy commands may only be ran in servers."
       );
