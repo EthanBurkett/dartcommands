@@ -23,7 +23,8 @@ class CommandHandler {
         var _a, _b, _c, _d, _e, _f, _g, _h, _j;
         if (((_a = message.author) === null || _a === void 0 ? void 0 : _a.id) == ((_b = this._client.user) === null || _b === void 0 ? void 0 : _b.id))
             return;
-        if (!message.guild && message.content.startsWith(instance.prefix))
+        if (!message.guild ||
+            (!message.guild && message.content.startsWith(instance.prefix)))
             return message.channel.send("Legacy commands may only be ran in servers.");
         if (this._options.ignoreDMs && message.channel.type == "DM")
             return message.reply({ content: "DMs are disabled for this bot." });
