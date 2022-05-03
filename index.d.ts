@@ -41,8 +41,8 @@ export interface IOptions {
 export interface ExecuteOptions {
   user: User;
   options?: CommandInteractionOption[];
-  message?: Message<boolean>;
-  interaction?: CommandInteraction<CacheType>;
+  message: Message<boolean> | null;
+  interaction: CommandInteraction<CacheType> | null;
   guild: Guild;
   args?: string[];
   text?: string;

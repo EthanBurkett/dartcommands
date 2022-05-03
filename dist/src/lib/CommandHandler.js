@@ -135,6 +135,7 @@ class CommandHandler {
             text: args.join(" "),
             user: message.author,
             client: this._client,
+            interaction: null,
         });
         if (result instanceof Promise)
             result = await result;
@@ -217,6 +218,7 @@ class CommandHandler {
             interaction: interaction,
             instance: this._instance,
             client: this._client,
+            message: null,
         });
         if (reply instanceof Promise)
             reply = await reply;
