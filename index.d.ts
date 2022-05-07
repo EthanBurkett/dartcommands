@@ -8,10 +8,18 @@ import {
   User,
   MessageEmbed,
   DMChannel,
+  PartialDMChannel,
+  NewsChannel,
+  TextChannel,
+  ThreadChannel,
   PermissionString,
   HexColorString,
   ColorResolvable,
   Interaction,
+  ApplicationCommandOptionData,
+  CommandInteraction,
+  CacheType,
+  CommandInteractionOption,
 } from "discord.js";
 import { ConnectOptions } from "mongoose";
 
@@ -20,6 +28,7 @@ export interface IOptions {
   commandsDir: strinhg;
   eventsDir?: string;
   botOwners?: string[];
+  ignoreDMs?: boolean;
   ignoreBots?: true | false;
   testServers?: string[];
   typescript?: boolean;
@@ -31,22 +40,22 @@ export interface IOptions {
 }
 
 export interface ExecuteOptions {
-  user?: User;
+  user: User;
   options?: CommandInteractionOption[];
-  message?: Message<boolean>;
-  interaction?: CommandInteraction<CacheType>;
-  guild?: Guild;
+  message: Message<boolean> | null;
+  interaction: CommandInteraction<CacheType> | null;
+  guild: Guild;
   args?: string[];
   text?: string;
-  client?: Client;
-  channel?:
+  client: Client;
+  channel:
     | DMChannel
     | PartialDMChannel
     | NewsChannel
     | TextChannel
     | ThreadChannel;
-  instance?: any;
-  member?: GuildMember;
+  instance: any;
+  member: GuildMember;
 }
 
 export interface ICommand {
@@ -115,3 +124,5 @@ export interface ICache {
 export interface EventConfig {
   name?: string;
 }
+
+export type Events = "Dart.LegacyCommand" | "Dart.SlashCommand";

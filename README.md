@@ -204,3 +204,53 @@ export const config = {
   name: "message",
 };
 ```
+
+## Client Command Event
+
+With the latest update to DartCommands, you can now add an event listener from the client inside your events folder. This could be used for commands such as moderation logging.
+
+Example
+
+```js
+// Events/commands.js
+
+module.exports.run = (client) => {
+  client.on("Dart.LegacyCommand", (Command, message) => {
+    console.log(Command.name, message.author.id);
+  });
+  client.on("Dart.SlashCommand", (Command, interaction) => {
+    console.log(Command.name, interaction.member.user.id);
+  });
+};
+
+module.exports.config = {
+  name: "commands",
+};
+```
+
+#### With Typescript
+
+```ts
+// Events/commands.ts
+import { Client, Message, CommandInteraction, CacheType } from "discord.js";
+import { Events, ICommand } from "dartcommands";
+
+export const run = (client: Client) => {
+  client.on<Events>(
+    "Dart.LegacyCommand",
+    (Command: ICommand, message: Message<boolean>) => {
+      console.log(Command.name, message.author.id);
+    }
+  );
+  client.on<Events>(
+    "Dart.SlashCommand",
+    (Command: ICommand, interaction: CommandInteraction<CacheType>) => {
+      console.log(Command.name, interaction.member.user.id);
+    }
+  );
+};
+
+export const config = {
+  name: "commands",
+};
+```

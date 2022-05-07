@@ -11,7 +11,7 @@ import {
   Interaction,
   CommandInteraction,
 } from "discord.js";
-import { IOptions, ICommand, ExecuteOptions } from "../../index.d";
+import { IOptions, ICommand, ExecuteOptions, Events } from "../../index.d";
 import DartCommands from "../index";
 import { Messages } from "../lang/english";
 import { permissionList } from "../Validation/permissions";
@@ -45,9 +45,18 @@ export default class CommandHandler {
     message: Message<boolean>,
     instance: DartCommands
   ) {
-    if (!message) return;
-    const Prefix: string =
-      instance.Cache?.GuildPrefixes?.get(message.guild!.id) ?? instance.prefix;
+    if (message.author?.id == this._client.user?.id) return;
+    if (!message.guild && message.content.startsWith(instance.prefix))
+      return message.channel.send(
+        "Legacy commands may only be ran in servers."
+      );
+    if (this._options.ignoreDMs && message.channel.type == "DM")
+      return message.reply({ content: "DMs are disabled for this bot." });
+    if (message.member?.user.id == this._client!.user!.id) return;
+    const Prefix: string = message.guild
+      ? instance.Cache?.GuildPrefixes?.get(message.guild!.id) ?? instance.prefix
+      : instance.prefix;
+
     const MessagePrefix: string = message.content.substring(0, Prefix.length);
     let args: string[] = message.content.split(" ");
     if (
@@ -196,23 +205,6 @@ export default class CommandHandler {
         `${Command.name} has property "testOnly" but "testServers" is not defined in the setup method.`
       );
 
-    if (
-      Command.testOnly &&
-      instance.settings.testServers &&
-      !instance.settings.testServers?.includes(message.guild?.id!)
-    ) {
-      if (!Messages?.testOnly) return;
-      if (typeof Messages?.testOnly == "object") {
-        return message.reply({
-          embeds: [Messages.testOnly],
-        });
-      }
-
-      return message.reply({
-        content: Messages?.testOnly,
-      });
-    }
-
     const inst: any = instance;
 
     let result = Command.run({
@@ -225,10 +217,12 @@ export default class CommandHandler {
       text: args.join(" ")!,
       user: message.author!,
       client: this._client!,
+      interaction: null,
     });
 
     if (result instanceof Promise) result = await result;
 
+    this._client.emit<Events>("Dart.LegacyCommand", Command!, message!);
     this.replyFromCallback(message, result);
   }
 
@@ -239,6 +233,8 @@ export default class CommandHandler {
   ) {
     if (!interaction.isCommand()) return;
     const { user, commandName, options, guild, channelId } = interaction;
+    if (this._options.ignoreDMs && interaction.channel?.type == "DM")
+      return interaction.reply({ content: "DMs are disabled for this bot." });
     const member = interaction.member as GuildMember;
     const channel = guild?.channels.cache.get(channelId) || null;
     let Command: ICommand | undefined =
@@ -326,13 +322,16 @@ export default class CommandHandler {
       user: interaction.user!,
       guild: interaction.guild!,
       channel: interaction.channel!,
-      member,
+      member: member!,
       interaction: interaction!,
-      instance: this._instance,
+      instance: this._instance!,
+      client: this._client!,
+      message: null,
     });
 
     if (reply instanceof Promise) reply = await reply;
 
+    this._client.emit<Events>("Dart.SlashCommand", Command!, interaction!);
     this.replyFromCallback(interaction, reply);
   }
 
