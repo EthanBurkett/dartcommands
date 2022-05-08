@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import { Events } from "../..";
-import DartCommands from "../..";
+import { Events } from "../../index";
+import DartCommands from "../index";
 
 const Name = "dartcommands-prefixes";
 
