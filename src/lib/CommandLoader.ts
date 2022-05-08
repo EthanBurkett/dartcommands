@@ -65,7 +65,7 @@ export default class CommandLoader {
     ).map((file: any) => {
       const L = file.split("/");
       let name = L[L.length - 1].substring(0, L[L.length - 1].length - 3);
-      let Command: ICommand = this._options.typescript
+      let Command = require(file).default
         ? require(file).default
         : require(file);
 
@@ -121,7 +121,9 @@ export default class CommandLoader {
       (file: any) => {
         const L = file.split("/");
         let name = L[L.length - 1].substring(0, L[L.length - 1].length - 3);
-        let Command: ICommand = require(file).default;
+        let Command = require(file).default
+          ? require(file).default
+          : require(file);
 
         if (!Command) {
           console.log(

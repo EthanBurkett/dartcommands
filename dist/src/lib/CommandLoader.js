@@ -48,7 +48,7 @@ class CommandLoader {
         (await PG(`${path_1.default.join(process.cwd(), this._options.commandsDir)}/**/*.${this._options.typescript ? "ts" : "js"}`)).map((file) => {
             const L = file.split("/");
             let name = L[L.length - 1].substring(0, L[L.length - 1].length - 3);
-            let Command = this._options.typescript
+            let Command = require(file).default
                 ? require(file).default
                 : require(file);
             if (!Command) {
@@ -90,7 +90,9 @@ class CommandLoader {
             var _a;
             const L = file.split("/");
             let name = L[L.length - 1].substring(0, L[L.length - 1].length - 3);
-            let Command = require(file).default;
+            let Command = require(file).default
+                ? require(file).default
+                : require(file);
             if (!Command) {
                 console.log(chalk_1.default.red.bold(`Error: `) +
                     "Could not load command " +
