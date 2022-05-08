@@ -94,6 +94,7 @@ export default class DartCommands {
   public get prefix(): string;
   public get commands(): Collection<string, ICommand>;
   public get options(): IOptions;
+  public get client(): Client;
   public get Cache(): Cache;
   public UpdatePrefix(guildId: string, newPrefix: string);
   public setLanguageSettings(props: LANG_ENGLISH): this;
@@ -125,4 +126,7 @@ export interface EventConfig {
   name?: string;
 }
 
-export type Events = "Dart.LegacyCommand" | "Dart.SlashCommand";
+export type Events =
+  | "Dart.LegacyCommand"
+  | "Dart.SlashCommand"
+  | "Dart.UpdatePrefix";

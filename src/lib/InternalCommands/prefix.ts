@@ -1,11 +1,11 @@
 import { Message, MessageEmbed } from "discord.js";
-import { ICommand } from "../../../index";
+import { Events, ICommand } from "../../../index";
 import { Messages } from "../../lang/english";
 
 export default {
   description: "Change the prefix for the guild",
   permission: "ADMINISTRATOR",
-  async run({ guild, channel, instance, args }) {
+  async run({ guild, channel, instance, args, client }) {
     if (!guild) return;
     if (!args![0]) {
       const GuildPrefix = instance?.Cache.GuildPrefixes?.get(guild.id);
@@ -13,7 +13,7 @@ export default {
         title: `This guild's prefix is: ${
           GuildPrefix ? GuildPrefix : instance!.prefix
         }`,
-        color: instance?.getDefaultColor
+        color: instance?.getDefaultColor,
       });
     }
     const newPrefix = args![0].toLowerCase();
@@ -42,6 +42,8 @@ export default {
       /{PREFIX}/g,
       `${newPrefix}`
     );
+
+    client.emit<Events>("Dart.UpdatePrefix", guild.id, newPrefix);
 
     return channel.send({
       content: Messages?.prefixUpdated,
